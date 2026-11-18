@@ -156,6 +156,75 @@ main { margin-left: 226px; max-width: 1450px; padding-top: 38px; }
   font-size: 12px;
   font-weight: 750;
 }
+
+:root { --bg: #f5f0e7; --card: #fffcf6; --line: #e5ded0; }
+.journal-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(230px, 1.2fr);
+  gap: clamp(24px, 4vw, 54px);
+  overflow: visible;
+  background: radial-gradient(ellipse at 80% 10%, #594335, transparent 72%), #2c2825;
+}
+.journal-hero::after { content: none; }
+.journal-copy { min-width: 0; }
+.journal-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0 13px;
+  border: 1px solid #eeddb981;
+  border-radius: 9px;
+  background: transparent;
+  color: #f6e4bd;
+  text-align: left;
+}
+.journal-link:hover { background: #f6e4bd16; }
+.journal-link:focus-visible, .court-photo:focus-visible {
+  outline: 2px solid #f6e4bd;
+  outline-offset: 3px;
+}
+.court-photos {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-items: center;
+  gap: clamp(6px, 1.2vw, 16px);
+}
+.court-photo {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  aspect-ratio: 4 / 5;
+  border: 3px solid #f4e8ce;
+  border-radius: 7px;
+  box-shadow: 0 8px 20px #0005;
+  background: #483930;
+  color: #fff7e9;
+  text-decoration: none;
+}
+.court-photo:nth-child(1) { transform: rotate(-4deg); }
+.court-photo:nth-child(2) { transform: translateY(-5px); }
+.court-photo:nth-child(3) { transform: rotate(4deg); }
+.court-photo img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.court-photo.kobe img { object-position: 54% 29%; }
+.court-photo.edwards img { object-position: 50% 24%; }
+.court-photo.mitsui img { object-position: 50% 22%; }
+.court-photo span {
+  position: absolute;
+  inset: auto 0 0;
+  padding: 16px 5px 5px;
+  background: linear-gradient(transparent, #211a16f0);
+  font-size: clamp(11px, 1.3vw, 14px);
+  font-weight: 700;
+  text-align: center;
+}
+.court-photo:hover span { text-decoration: underline; }
+.court-photo > img[hidden] { display: none; }
+@media (max-width: 620px) {
+  .journal-hero { grid-template-columns: minmax(0, 1fr); }
+  .court-photos { max-width: 400px; padding-inline: 3px; }
+  .court-photo { aspect-ratio: 1 / 1; }
+}
 </style></head><body><svg width="0" height="0" class="icon-library" aria-hidden="true">
   <symbol id="icon-leaf" viewBox="0 0 24 24"><path d="M20 4c-9 0-15 4-15 10a5 5 0 0 0 5 5c6 0 10-6 10-15ZM4 20l9-9"/></symbol>
   <symbol id="icon-home" viewBox="0 0 24 24"><path d="m3 10 9-7 9 7v10H3z"/><path d="M9 20v-6h6v6"/></symbol>
@@ -168,7 +237,7 @@ main { margin-left: 226px; max-width: 1450px; padding-top: 38px; }
   <symbol id="icon-pin" viewBox="0 0 24 24"><path d="M19 10c0 5-7 10-7 10s-7-5-7-10a7 7 0 0 1 14 0Z"/><circle cx="12" cy="10" r="2"/></symbol>
   <symbol id="icon-arrow" viewBox="0 0 24 24"><path d="M4 12h15m-6-6 6 6-6 6"/></symbol>
 </svg>
-<aside><div class="brand"><div class="logo"><svg class="ui-icon" aria-hidden="true" focusable="false"><use href="#icon-leaf"/></svg></div>生活计划</div><button class="nav active" data-page="overview"><svg class="ui-icon" aria-hidden="true" focusable="false"><use href="#icon-home"/></svg> 总览</button><button class="nav" data-page="schedule"><svg class="ui-icon" aria-hidden="true" focusable="false"><use href="#icon-clock"/></svg> 每日作息</button><button class="nav" data-page="social"><svg class="ui-icon" aria-hidden="true" focusable="false"><use href="#icon-people"/></svg> 社交拓展</button><button class="nav" data-page="habits"><svg class="ui-icon" aria-hidden="true" focusable="false"><use href="#icon-check"/></svg> 习惯与护理</button></aside><main><div class="top"><div><h1 class="heading" id="pagetitle">让生活重新有节奏</h1><div class="sub" id="pagedesc">规律作息 · 每周健身三次 · 逐步建立自己的朋友圈</div></div><div class="topright"><button class="iconbtn" id="theme" title="切换深色模式"><svg class="ui-icon" aria-hidden="true" focusable="false"><use href="#icon-moon"/></svg>主题</button></div></div>
+<aside><div class="brand"><div class="logo"><svg class="ui-icon" aria-hidden="true" focusable="false"><use href="#icon-leaf"/></svg></div>生活计划</div><button class="nav active" data-page="overview"><svg class="ui-icon" aria-hidden="true" focusable="false"><use href="#icon-home"/></svg> 总览</button><button class="nav" data-page="schedule"><svg class="ui-icon" aria-hidden="true" focusable="false"><use href="#icon-clock"/></svg> 每日作息</button><button class="nav" data-page="social"><svg class="ui-icon" aria-hidden="true" focusable="false"><use href="#icon-people"/></svg> 社交拓展</button><button class="nav" data-page="habits"><svg class="ui-icon" aria-hidden="true" focusable="false"><use href="#icon-check"/></svg> 习惯与护理</button></aside><main><div class="top"><div><h1 class="heading" id="pagetitle">我的生活手账</h1><div class="sub" id="pagedesc">作息、健身和一点自己的时间</div></div><div class="topright"><button class="iconbtn" id="theme" title="切换深色模式"><svg class="ui-icon" aria-hidden="true" focusable="false"><use href="#icon-moon"/></svg>主题</button></div></div>
 <section class="local-status" aria-label="青岛崂山时间与天气">
   <div class="local-time">
     <div class="local-date"><svg class="ui-icon" aria-hidden="true" focusable="false"><use href="#icon-calendar"/></svg><time id="todayDate"></time></div>
@@ -183,7 +252,30 @@ main { margin-left: 226px; max-width: 1450px; padding-top: 38px; }
     <a href="https://uapis.cn/docs/api-reference/get-misc-weather" target="_blank" rel="noopener">天气来源</a>
   </div>
 </section>
-<section class="page active" id="overview"><div class="hero"><div><h2>按自己的节奏，<br>把每天过好。</h2><p>看看今天的安排，挑一件事开始。</p></div></div><div class="metrics"><div class="card metric"><div class="lab"><svg class="ui-icon" aria-hidden="true" focusable="false"><use href="#icon-strength"/></svg>健身频率</div><div class="val">3 <small style="font-size:13px">次/周</small></div><div class="foot">周一 · 周三 · 周五</div></div><div class="card metric"><div class="lab"><svg class="ui-icon" aria-hidden="true" focusable="false"><use href="#icon-pin"/></svg>健身房距离</div><div class="val">5 <small style="font-size:13px">分钟</small></div><div class="foot">从家步行</div></div><div class="card metric"><div class="lab"><svg class="ui-icon" aria-hidden="true" focusable="false"><use href="#icon-moon"/></svg>睡眠目标</div><div class="val">23:00</div><div class="foot">逐步从 00:00 停刷手机过渡</div></div><div class="card metric"><div class="lab"><svg class="ui-icon" aria-hidden="true" focusable="false"><use href="#icon-people"/></svg>社交节奏</div><div class="val">2 <small style="font-size:13px">周/次</small></div><div class="foot">第3周起尝试线下活动</div></div></div><div class="twocol"><div class="card panel"><div class="sectionbar"><h2 class="sectiontitle">一周生活节奏</h2><span class="hint">点击日期查看作息</span></div><div class="week" id="week-overview"></div><div style="margin-top:20px"><div class="sectionbar"><h2 class="sectiontitle">所选日期安排</h2><button class="iconbtn" onclick="go('schedule')">完整作息<svg class="ui-icon" aria-hidden="true" focusable="false"><use href="#icon-arrow"/></svg></button></div><div id="preview"></div></div><div class="note overview-note">工作日午休 11:45–12:45 可回家：按骑车单程约10分钟估算，往返约20分钟，需要在这一小时内完成午餐、陪狗狗和15分钟午睡；午餐建议提前点好外卖。周末不安排健身房，留给外出、兴趣和社交活动。</div></div><div class="card panel"><div class="sectionbar"><h2 class="sectiontitle">本周重点</h2><span class="tag">轻量执行</span></div><div class="progressrow"><span>完成进度</span><strong id="progressText" aria-live="polite">0 / 5</strong></div><div class="bar"><div id="progressBar"></div></div><div class="checklist" id="overviewchecks"></div><div class="note">作息仍在过渡期：先做到午夜 00:00 停止刷手机，睡眠稳定后再逐渐提前起床。不要为了赶时间表牺牲睡眠。</div></div></div><div class="card panel season-panel"><div class="season-head"><div><h2 class="sectiontitle" id="seasonTitle">四季生活建议</h2><div class="sub" id="seasonSubtitle">根据青岛当地日期自动切换</div></div><div class="season-switch" id="seasonSwitch"></div></div><div class="season-grid" id="seasonTips"></div><div class="season-note">按青岛常用气象季节划分：春3–5月、夏6–8月、秋9–11月、冬12–2月。实际出行请结合当地气温、风力、降雨和日照。</div></div></section>
+<section class="page active" id="overview">
+  <div class="hero journal-hero">
+    <div class="journal-copy">
+      <h2>按自己的节奏，<br>把每天过好。</h2>
+      <button type="button" class="journal-link" onclick="pick(currentWeekday);go('schedule')">
+        看今天的作息 <svg class="ui-icon" aria-hidden="true" focusable="false"><use href="#icon-arrow"/></svg>
+      </button>
+    </div>
+    <div class="court-photos" aria-label="我的篮球剪贴">
+      <a class="court-photo kobe" href="https://commons.wikimedia.org/wiki/File:Kobe_Bryant_2014.jpg" target="_blank" rel="noopener" aria-label="科比·布莱恩特照片，Keith Allison，CC BY-SA 2.0，打开来源">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/56/Kobe_Bryant_2014.jpg/330px-Kobe_Bryant_2014.jpg" alt="" width="330" height="314" decoding="async">
+        <span>科比</span>
+      </a>
+      <a class="court-photo edwards" href="https://commons.wikimedia.org/wiki/File:Anthony_Edwards.jpg" target="_blank" rel="noopener" aria-label="爱德华兹照片，CCS Pictures，CC BY-SA 2.0，打开来源">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/Anthony_Edwards.jpg/330px-Anthony_Edwards.jpg" alt="" width="330" height="263" decoding="async">
+        <span>爱德华兹</span>
+      </a>
+      <a class="court-photo mitsui" href="https://slamdunk-movie.jp/zh-cn/about/character/?char=mitsui" target="_blank" rel="noopener" aria-label="三井寿，打开电影官方角色页">
+        <img src="https://slamdunk-movie.jp/files/images/p_main_mitsui.jpg" alt="" width="360" height="480" decoding="async">
+        <span>三井寿</span>
+      </a>
+    </div>
+  </div>
+<div class="metrics"><div class="card metric"><div class="lab"><svg class="ui-icon" aria-hidden="true" focusable="false"><use href="#icon-strength"/></svg>健身频率</div><div class="val">3 <small style="font-size:13px">次/周</small></div><div class="foot">周一 · 周三 · 周五</div></div><div class="card metric"><div class="lab"><svg class="ui-icon" aria-hidden="true" focusable="false"><use href="#icon-pin"/></svg>健身房距离</div><div class="val">5 <small style="font-size:13px">分钟</small></div><div class="foot">从家步行</div></div><div class="card metric"><div class="lab"><svg class="ui-icon" aria-hidden="true" focusable="false"><use href="#icon-moon"/></svg>睡眠目标</div><div class="val">23:00</div><div class="foot">逐步从 00:00 停刷手机过渡</div></div><div class="card metric"><div class="lab"><svg class="ui-icon" aria-hidden="true" focusable="false"><use href="#icon-people"/></svg>社交节奏</div><div class="val">2 <small style="font-size:13px">周/次</small></div><div class="foot">第3周起尝试线下活动</div></div></div><div class="twocol"><div class="card panel"><div class="sectionbar"><h2 class="sectiontitle">一周生活节奏</h2><span class="hint">点击日期查看作息</span></div><div class="week" id="week-overview"></div><div style="margin-top:20px"><div class="sectionbar"><h2 class="sectiontitle">所选日期安排</h2><button class="iconbtn" onclick="go('schedule')">完整作息<svg class="ui-icon" aria-hidden="true" focusable="false"><use href="#icon-arrow"/></svg></button></div><div id="preview"></div></div><div class="note overview-note">工作日午休 11:45–12:45 可回家：按骑车单程约10分钟估算，往返约20分钟，需要在这一小时内完成午餐、陪狗狗和15分钟午睡；午餐建议提前点好外卖。周末不安排健身房，留给外出、兴趣和社交活动。</div></div><div class="card panel"><div class="sectionbar"><h2 class="sectiontitle">本周重点</h2><span class="tag">轻量执行</span></div><div class="progressrow"><span>完成进度</span><strong id="progressText" aria-live="polite">0 / 5</strong></div><div class="bar"><div id="progressBar"></div></div><div class="checklist" id="overviewchecks"></div><div class="note">作息仍在过渡期：先做到午夜 00:00 停止刷手机，睡眠稳定后再逐渐提前起床。不要为了赶时间表牺牲睡眠。</div></div></div><div class="card panel season-panel"><div class="season-head"><div><h2 class="sectiontitle" id="seasonTitle">四季生活建议</h2><div class="sub" id="seasonSubtitle">根据青岛当地日期自动切换</div></div><div class="season-switch" id="seasonSwitch"></div></div><div class="season-grid" id="seasonTips"></div><div class="season-note">按青岛常用气象季节划分：春3–5月、夏6–8月、秋9–11月、冬12–2月。实际出行请结合当地气温、风力、降雨和日照。</div></div></section>
 <section class="page" id="schedule"><div class="sectionbar"><h2 class="sectiontitle">精确到分钟的生活安排</h2><span class="hint">工作日 11:45–12:45 午饭、陪狗狗、午睡</span></div><div class="card panel"><div class="season-head"><div class="sub" id="scheduleSeason">当前季节</div></div><div class="week" id="week-schedule"></div><div style="display:flex;justify-content:space-between;align-items:center;margin-top:25px;gap:10px"><div><h2 class="sectiontitle" id="dayTitle">周一 · 健身日</h2><div class="sub" id="dayDesc">仅安排健身时间，训练动作由你自己决定</div></div><span class="tag" id="dayTag">健身</span></div><div class="timeline" id="fullTimeline"></div></div><div class="note">注：这是最终稳定作息的目标版。现在仍按 00:00 停止刷手机、08:00 起床起步，逐步过渡。若下班延迟，优先保留睡眠与照顾狗狗的时间。</div></section>
 <section class="page" id="social"><div class="hero"><div><h2>认识新朋友，<br>不需要一下子变得外向。</h2><p>先有固定的活动，再自然认识熟人、朋友和异性。</p></div><div class="big">01 → 03</div></div><div style="margin-top:26px" class="sectionbar"><h2 class="sectiontitle">三阶段社交路线</h2><span class="hint">慢慢来，不强制打卡认识人数</span></div><div class="phasegrid"><div class="card phase"><div class="num">第 1–2 周</div><h3>先建立出门习惯</h3><p>核心是把作息、健身和遛狗稳定下来。</p><ul><li>周六下午至少外出一次</li><li>可以独自去咖啡馆、公园或商场</li><li>不要求主动搭讪陌生人</li></ul></div><div class="card phase"><div class="num">第 3–4 周</div><h3>第一次参加活动</h3><p>选择能单人报名的小规模活动，降低社交压力。</p><ul><li>两周尝试一次线下活动</li><li>优先崂山区、交通方便的场地</li><li>以参与活动为主，聊天为辅</li></ul></div><div class="card phase"><div class="num">第 2 个月</div><h3>培养固定朋友圈</h3><p>重复参加喜欢的活动，比不断认识陌生人更重要。</p><ul><li>争取每周一次固定活动</li><li>和聊得来的人保持联系</li><li>自然扩大同龄朋友和异性社交圈</li></ul></div></div><div style="margin-top:29px" class="sectionbar"><h2 class="sectiontitle">适合你的社交方式</h2><span class="hint">根据慢热性格和现有生活习惯筛选</span></div><div class="activitygrid"><div class="card activity"><div class="symbol">🏸</div><h3>羽毛球 / 轻运动</h3><p>一起运动就有共同话题，聊天不需要刻意找话题。适合固定每周参加。</p></div><div class="card activity"><div class="symbol">🎲</div><h3>桌游 / 小型聚会</h3><p>游戏自带互动环节，容易认识同龄人。优先新手友好、人数不太多的局。</p></div><div class="card activity"><div class="symbol">🐶</div><h3>宠物活动 / 遛狗社交</h3><p>带着性格友好的马尔泰，交流可以从狗狗自然开始。注意场地规则和狗狗状态。</p></div></div><div style="margin-top:28px" class="twocol"><div class="card panel"><h2 class="sectiontitle">周六社交时间块</h2><div class="timeline"><div class="entry key"><div class="time">13:30–14:00</div><div class="rail"><div class="dot"></div></div><div class="task">出门、前往活动地点</div></div><div class="entry"><div class="time">14:00–16:00</div><div class="rail"><div class="dot"></div></div><div class="task">参加活动或自由探索青岛</div></div><div class="entry"><div class="time">16:00–17:00</div><div class="rail"><div class="dot"></div></div><div class="task">返程，预留回家照顾狗狗的时间</div></div></div><div class="note">这是预留时段，不代表已有报名活动。以后确认真实活动的地点、时间和交通后，再具体替换。</div></div><div class="card panel"><h2 class="sectiontitle">社交时记住三件事</h2><div class="rules"><div class="rule"><span>①</span><div><b>不追求一次就交到朋友</b><p>参加活动本身就是一次成功尝试。</p></div></div><div class="rule"><span>②</span><div><b>先重复出现，再深入聊天</b><p>熟悉的面孔更容易发展成真正的朋友。</p></div></div><div class="rule"><span>③</span><div><b>认识异性是自然结果</b><p>先建立健康、真实的社交圈，不把每次活动变成相亲。</p></div></div></div></div></div><div class="footer">后续可增加：真实的青岛本地活动清单、报名链接、费用和交通方式。目前未虚构任何活动信息。</div></section>
 <section class="page" id="habits"><div class="sectionbar"><h2 class="sectiontitle">日常护理与习惯</h2><span class="hint">基础、可持续、不过度复杂</span></div><div class="steps"><div class="card step"><span class="tag">早晨</span><h3>早晨 · 个人整理</h3><p>起床后洗漱，做简单护肤，再遛狗、喂狗和换衣。春秋用轻薄保湿，夏天选清爽保湿，冬天干燥时用滋润一点的面霜。</p></div><div class="card step"><span class="tag">晚上</span><h3>晚上 · 集中洗护</h3><p>一次完成刷牙、清洁牙缝、洗澡、按需洗头、洁面和保湿。洗过头就吹干，再单独整理次日衣物。</p></div><div class="card step"><span class="tag">睡前</span><h3>睡前 · 手机管理</h3><p>当前阶段先在 00:00 锁屏，手机可以继续放床头。稳定后逐步提前至 23:00。</p></div></div><div style="margin-top:22px" class="twocol"><div class="card panel"><h2 class="sectiontitle">固定生活原则</h2><div class="rules"><div class="rule"><svg class="ui-icon" aria-hidden="true" focusable="false"><use href="#icon-clock"/></svg><div><b>睡眠优先</b><p>最终目标 23:00–07:00，过渡期不强迫突然早起。</p></div></div><div class="rule"><svg class="ui-icon" aria-hidden="true" focusable="false"><use href="#icon-people"/></svg><div><b>早晚遛狗</b><p>早晨逐步增加至30分钟；冬季晚上走有照明的安全路线。</p></div></div><div class="rule"><span>⌁</span><div><b>健身只固定时间</b><p>周一、周三、周五；训练内容完全由你自己决定。</p></div></div><div class="rule"><span>✦</span><div><b>保留娱乐</b><p>不取消游戏和放松，避免生活计划变成另一份工作。</p></div></div></div></div><div class="card panel"><h2 class="sectiontitle">习惯打卡</h2><div class="sub">勾选状态保存在当前浏览器本地</div><div class="progressrow"><span>完成进度</span><strong id="habitProgress" aria-live="polite">0 / 5</strong></div><div class="bar"><div id="habitBar"></div></div><div class="checklist" id="habitchecks"></div><button class="iconbtn" id="reset" style="margin-top:16px">重置打卡</button></div></div></section>
@@ -211,7 +303,7 @@ function visibleSchedule(day) {
   return entries;
 }
 
-function renderWeek(){for(const id of ['week-overview','week-schedule'])document.getElementById(id).innerHTML=names.map((n,i)=>`<button class="day ${gym.includes(i)?'gym':''} ${selected===i?'selected':''}" aria-pressed="${selected===i}" onclick="pick(${i})"><b>${n.slice(1)}</b><small>${gym.includes(i)?'健身':i===5?'外出':i===6?'恢复':'休息'}</small></button>`).join('');document.getElementById('dayTitle').textContent=names[selected]+' · '+(gym.includes(selected)?'健身日':selected===5?'自由外出日':selected===6?'恢复日':'非健身日');document.getElementById('dayDesc').textContent=gym.includes(selected)?'步行5分钟到健身房，训练内容由你自己决定':'保持生活节奏，留出休息和自由空间';document.getElementById('dayTag').textContent=gym.includes(selected)?'健身':'自由安排';document.getElementById('fullTimeline').innerHTML=renderEntries(visibleSchedule(selected));const preview = visibleSchedule(selected).filter(([t,v])=>/遛狗|健身|洗澡|睡眠|社交/.test(v)).slice(0,5);if (selected === currentWeekday && currentEntry && !preview.some(([time, task]) => time === currentEntry[0] && task === currentEntry[1])) preview.unshift(currentEntry);document.getElementById('preview').innerHTML=renderEntries(preview)}function pick(i){selected=i;renderWeek()}const titles={overview:['让生活重新有节奏','规律作息 · 每周健身三次 · 逐步建立自己的朋友圈'],schedule:['每日作息','工作日精确安排，周末保留自由'],social:['社交拓展计划','从慢热到熟悉，不强迫自己突然外向'],habits:['习惯与个人护理','睡眠、遛狗、洗漱护肤，逐步稳定']};function go(id){document.querySelectorAll('.page').forEach(x=>x.classList.toggle('active',x.id===id));document.querySelectorAll('[data-page]').forEach(x=>x.classList.toggle('active',x.dataset.page===id));document.getElementById('pagetitle').textContent=titles[id][0];document.getElementById('pagedesc').textContent=titles[id][1];window.scrollTo(0,0)}document.querySelectorAll('[data-page]').forEach(x=>x.addEventListener('click',()=>go(x.dataset.page)));function renderChecks(){const html=items.map((x,i)=>`<label class="check"><input type="checkbox" data-check="${i}" ${checked[i]?'checked':''}><span>${x}</span></label>`).join('');document.getElementById('overviewchecks').innerHTML=html;document.getElementById('habitchecks').innerHTML=html;const count=items.filter((_,i)=>checked[i]).length;for(const id of ['progressText','habitProgress'])document.getElementById(id).textContent=count+' / '+items.length;for(const id of ['progressBar','habitBar'])document.getElementById(id).style.width=(count/items.length*100)+'%';document.querySelectorAll('[data-check]').forEach(el=>el.addEventListener('change',e=>{checked[e.target.dataset.check]=e.target.checked;localStorage.setItem('lifeos-checks',JSON.stringify(checked));renderChecks()}))}document.getElementById('reset').onclick=()=>{checked={};localStorage.removeItem('lifeos-checks');renderChecks()};document.getElementById('theme').onclick=()=>{document.body.classList.toggle('dark');localStorage.setItem('lifeos-dark',document.body.classList.contains('dark')?'1':'0')};if(localStorage.getItem('lifeos-dark')==='1')document.body.classList.add('dark');const qingdaoZone = 'Asia/Shanghai';
+function renderWeek(){for(const id of ['week-overview','week-schedule'])document.getElementById(id).innerHTML=names.map((n,i)=>`<button class="day ${gym.includes(i)?'gym':''} ${selected===i?'selected':''}" aria-pressed="${selected===i}" onclick="pick(${i})"><b>${n.slice(1)}</b><small>${gym.includes(i)?'健身':i===5?'外出':i===6?'恢复':'休息'}</small></button>`).join('');document.getElementById('dayTitle').textContent=names[selected]+' · '+(gym.includes(selected)?'健身日':selected===5?'自由外出日':selected===6?'恢复日':'非健身日');document.getElementById('dayDesc').textContent=gym.includes(selected)?'步行5分钟到健身房，训练内容由你自己决定':'保持生活节奏，留出休息和自由空间';document.getElementById('dayTag').textContent=gym.includes(selected)?'健身':'自由安排';document.getElementById('fullTimeline').innerHTML=renderEntries(visibleSchedule(selected));const preview = visibleSchedule(selected).filter(([t,v])=>/遛狗|健身|洗澡|睡眠|社交/.test(v)).slice(0,5);if (selected === currentWeekday && currentEntry && !preview.some(([time, task]) => time === currentEntry[0] && task === currentEntry[1])) preview.unshift(currentEntry);document.getElementById('preview').innerHTML=renderEntries(preview)}function pick(i){selected=i;renderWeek()}const titles={overview:['我的生活手账','作息、健身和一点自己的时间'],schedule:['每日作息','工作日精确安排，周末保留自由'],social:['社交拓展计划','从慢热到熟悉，不强迫自己突然外向'],habits:['习惯与个人护理','睡眠、遛狗、洗漱护肤，逐步稳定']};function go(id){document.querySelectorAll('.page').forEach(x=>x.classList.toggle('active',x.id===id));document.querySelectorAll('[data-page]').forEach(x=>x.classList.toggle('active',x.dataset.page===id));document.getElementById('pagetitle').textContent=titles[id][0];document.getElementById('pagedesc').textContent=titles[id][1];window.scrollTo(0,0)}document.querySelectorAll('[data-page]').forEach(x=>x.addEventListener('click',()=>go(x.dataset.page)));function renderChecks(){const html=items.map((x,i)=>`<label class="check"><input type="checkbox" data-check="${i}" ${checked[i]?'checked':''}><span>${x}</span></label>`).join('');document.getElementById('overviewchecks').innerHTML=html;document.getElementById('habitchecks').innerHTML=html;const count=items.filter((_,i)=>checked[i]).length;for(const id of ['progressText','habitProgress'])document.getElementById(id).textContent=count+' / '+items.length;for(const id of ['progressBar','habitBar'])document.getElementById(id).style.width=(count/items.length*100)+'%';document.querySelectorAll('[data-check]').forEach(el=>el.addEventListener('change',e=>{checked[e.target.dataset.check]=e.target.checked;localStorage.setItem('lifeos-checks',JSON.stringify(checked));renderChecks()}))}document.getElementById('reset').onclick=()=>{checked={};localStorage.removeItem('lifeos-checks');renderChecks()};document.getElementById('theme').onclick=()=>{document.body.classList.toggle('dark');localStorage.setItem('lifeos-dark',document.body.classList.contains('dark')?'1':'0')};if(localStorage.getItem('lifeos-dark')==='1')document.body.classList.add('dark');const qingdaoZone = 'Asia/Shanghai';
 const dateFormat = new Intl.DateTimeFormat('zh-CN', {
   timeZone: qingdaoZone, year: 'numeric', month: 'long', day: 'numeric', weekday: 'long'
 });
@@ -282,6 +374,11 @@ async function refreshWeather() {
   }
 }
 
+for (const image of document.querySelectorAll('.court-photo img')) {
+  const hideUnavailable = () => { image.hidden = true; };
+  image.addEventListener('error', hideUnavailable, { once: true });
+  if (image.complete && image.naturalWidth === 0) hideUnavailable();
+}
 renderClock();
 setInterval(renderClock, 1000 * 10);
 refreshWeather();
