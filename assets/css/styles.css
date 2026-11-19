@@ -139,20 +139,56 @@ main { margin-left: 226px; max-width: 1450px; padding-top: 38px; }
 .local-clock time { font-size: 20px; font-variant-numeric: tabular-nums; }
 .local-weather {
   display: flex;
-  align-items: center;
-  gap: 8px;
+  flex: 0 1 480px;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: 10px;
   min-width: 0;
   flex-wrap: wrap;
 }
-.weather-copy { min-width: 0; }
-.weather-copy strong { color: var(--ink); font-weight: 750; }
+.weather-icon {
+  flex: none;
+  width: 34px;
+  font-size: 26px;
+  line-height: 1.15;
+  text-align: center;
+}
+.weather-copy { flex: 1 1 190px; min-width: 0; }
+.weather-title { display: flex; align-items: center; gap: 5px; flex-wrap: wrap; }
+.weather-title .ui-icon { font-size: 14px; }
+.weather-title strong { color: var(--ink); font-weight: 750; }
+.weather-updated { color: var(--muted); font-size: 11px; }
 .weather-copy #localWeather { color: var(--muted); font-size: 12px; line-height: 1.5; }
-.local-weather a { color: var(--muted); font-size: 11px; }
+.weather-tip {
+  margin-top: 5px;
+  padding: 4px 8px;
+  border-radius: 7px;
+  background: var(--pale);
+  color: var(--ink);
+  font-size: 11px;
+  line-height: 1.45;
+}
+.weather-tip[hidden] { display: none; }
+.weather-actions { display: flex; align-items: center; gap: 8px; margin-left: auto; padding-top: 2px; }
+.weather-actions a { color: var(--muted); font-size: 11px; }
+.weather-refresh {
+  border: 1px solid var(--line);
+  background: var(--card);
+  color: var(--muted);
+  border-radius: 7px;
+  padding: 2px 7px;
+  font-size: 11px;
+  line-height: 1.5;
+}
+.weather-refresh:hover { color: var(--accent); border-color: var(--accent); }
+.weather-refresh[disabled] { opacity: .55; cursor: progress; }
+.weather-refresh:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
 @media (max-width: 550px) {
   .local-status { padding: 12px; gap: 10px 12px; }
-  .local-weather { width: 100%; }
-  .local-weather a { margin-left: 27px; }
+  .local-weather { width: 100%; flex-basis: 100%; justify-content: flex-start; }
+  .weather-copy { flex: 1 1 0; }
+  .weather-actions { width: auto; margin-left: 0; padding-top: 2px; }
 }
 
 .entry.current {

@@ -275,6 +275,13 @@
      青岛天气
      ------------------------------------------------------------------ */
 
+  const WEATHER_CACHE_KEY = 'lifeplan-weather-v1';
+  let weatherLoading = false;
+  let weatherHasData = false;
+  let weatherLastFetch = 0;
+  let weatherUpdatedText = '';
+  let weatherUpdatedTime = '';
+
   function renderWeatherSource() {
     if (!weather) return;
     const city = $('weatherCity');
@@ -282,23 +289,102 @@
     if (city) city.textContent = weather.city;
     if (source) {
       source.href = weather.sourceUrl;
-      source.textContent = weather.sourceName || '天气来源';
+      source.textContent = weather.sourceName || '来源';
     }
   }
 
-  async function refreshWeather() {
+  function weatherIconOf(text) {
+    if (/台风/.test(text)) return '🌀';
+    if (/雷/.test(text)) return '⛈️';
+    if (/雪|冰雹/.test(text)) return '🌨️';
+    if (/雨/.test(text)) return '🌧️';
+    if (/雾|霾|沙|尘/.test(text)) return '🌫️';
+    if (/多云/.test(text)) return '⛅';
+    if (/晴/.test(text)) return '☀️';
+    if (/阴/.test(text)) return '☁️';
+    return '🌤️';
+  }
+
+  function weatherTipOf(current, temperature) {
+    const text = String(current.weather || '');
+    if (/台风/.test(text)) return '台风天气，尽量减少外出，注意门窗安全。';
+    if (/雨|雪|雷|冰雹/.test(text)) return '有降水，出门带伞，遛狗和户外活动建议缩短。';
+    if (/雾|霾/.test(text)) return '能见度较低，出行注意安全。';
+
+    const powers = String(current.wind_power || '').match(/\d+(?:\.\d+)?/g);
+    const power = powers ? Math.max(...powers.map(Number)) : NaN;
+    if (Number.isFinite(power) && power >= 6) return '风力较大，海边和遛狗路线注意防风。';
+    if (temperature >= 30) return '气温较高，避开正午户外，注意补水。';
+    if (temperature <= 0) return '气温较低，注意保暖和防风。';
+    return '';
+  }
+
+  function weatherTimeOf(current, savedAt) {
+    const match = String(current.report_time || '').match(/(\d{1,2}:\d{2})/);
+    if (match) return match[1];
+    if (savedAt) return clockFormat.format(new Date(savedAt));
+    return '';
+  }
+
+  function renderWeather(current, savedAt, cached = false) {
     const target = $('localWeather');
     if (!target) return;
-    if (!weather) {
-      target.textContent = '天气暂不可用';
-      return;
-    }
+    const temperature = Number(current.temperature);
+    const text = String(current.weather || '').trim();
+    if (!Number.isFinite(temperature) || !text) return;
 
+    const details = [text + ' ' + Math.round(temperature) + '°C'];
+    if (current.wind_direction && current.wind_power) {
+      const power = String(current.wind_power).replace(/级$/, '');
+      details.push(current.wind_direction + ' ' + power + '级');
+    }
+    const humidity = Number(current.humidity);
+    if (Number.isFinite(humidity)) details.push('湿度 ' + Math.round(humidity) + '%');
+
+    target.textContent = details.join(' · ');
+    target.title = current.report_time ? '更新时间 ' + current.report_time : '';
+
+    const icon = $('weatherIcon');
+    if (icon) icon.textContent = weatherIconOf(text);
+
+    weatherUpdatedTime = weatherTimeOf(current, savedAt);
+    weatherUpdatedText = weatherUpdatedTime
+      ? (cached ? '上次更新 ' : '更新于 ') + weatherUpdatedTime
+      : '';
+    const updated = $('weatherUpdated');
+    if (updated) updated.textContent = weatherUpdatedText;
+
+    const tip = $('weatherTip');
+    if (tip) {
+      const tipText = weatherTipOf(current, temperature);
+      tip.textContent = tipText;
+      tip.hidden = !tipText;
+    }
+    weatherHasData = true;
+  }
+
+  function readWeatherCache() {
+    const raw = storage.get(WEATHER_CACHE_KEY);
+    if (!raw) return null;
+    try {
+      const cached = JSON.parse(raw);
+      if (!cached || !cached.data || !cached.savedAt) return null;
+      if (Date.now() - cached.savedAt > 6 * 60 * 60 * 1000) return null;
+      if (!Number.isFinite(Number(cached.data.temperature)) || !String(cached.data.weather || '').trim()) return null;
+      return cached;
+    } catch {
+      return null;
+    }
+  }
+
+  async function fetchWeatherOnce() {
+    if (!weather) throw new Error('天气配置缺失');
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 12000);
     try {
       const response = await fetch(weather.url, {
         signal: controller.signal,
+        cache: 'no-store',
         headers: { Accept: 'application/json' }
       });
       if (!response.ok) throw new Error('天气服务不可用');
@@ -309,22 +395,65 @@
       if (!Number.isFinite(temperature) || typeof current.weather !== 'string' || !current.weather.trim()) {
         throw new Error('天气数据不完整');
       }
-
-      const details = [current.weather.trim() + ' ' + Math.round(temperature) + '°C'];
-      if (current.wind_direction && current.wind_power) {
-        const power = String(current.wind_power).replace(/级$/, '');
-        details.push(current.wind_direction + ' ' + power + '级');
-      }
-      const humidity = Number(current.humidity);
-      if (Number.isFinite(humidity)) details.push('湿度 ' + Math.round(humidity) + '%');
-
-      target.textContent = details.join(' · ');
-      target.title = current.report_time ? '更新时间 ' + current.report_time : '';
-    } catch {
-      target.textContent = '天气暂不可用';
-      target.title = '';
+      return current;
     } finally {
       clearTimeout(timeout);
+    }
+  }
+
+  async function refreshWeather() {
+    const target = $('localWeather');
+    if (!target) return;
+    if (!weather) {
+      target.textContent = '天气暂不可用';
+      return;
+    }
+    if (weatherLoading) return;
+
+    weatherLoading = true;
+    const button = $('weatherRefresh');
+    if (button) {
+      button.disabled = true;
+      button.textContent = '刷新中';
+    }
+
+    try {
+      let current = null;
+      let lastError = null;
+      for (let attempt = 0; attempt < 2; attempt += 1) {
+        try {
+          current = await fetchWeatherOnce();
+          break;
+        } catch (error) {
+          lastError = error;
+          if (attempt === 0) await new Promise((resolve) => setTimeout(resolve, 1200));
+        }
+      }
+      if (!current) throw lastError || new Error('天气暂不可用');
+
+      renderWeather(current, Date.now(), false);
+      storage.set(WEATHER_CACHE_KEY, JSON.stringify({ data: current, savedAt: Date.now() }));
+      weatherLastFetch = Date.now();
+    } catch {
+      if (weatherHasData) {
+        const updated = $('weatherUpdated');
+        if (updated) {
+          updated.textContent = weatherUpdatedTime ? '更新失败 · 上次 ' + weatherUpdatedTime : '更新失败';
+        }
+      } else {
+        target.textContent = '天气暂不可用';
+        target.title = '';
+        const updated = $('weatherUpdated');
+        if (updated) updated.textContent = '点击刷新重试';
+        const tip = $('weatherTip');
+        if (tip) tip.hidden = true;
+      }
+    } finally {
+      weatherLoading = false;
+      if (button) {
+        button.disabled = false;
+        button.textContent = '刷新';
+      }
     }
   }
 
@@ -520,7 +649,21 @@
   renderWeatherSource();
   renderClock(true);
   go(location.hash.slice(1), false);
+
+  const cachedWeather = readWeatherCache();
+  if (cachedWeather) {
+    renderWeather(cachedWeather.data, cachedWeather.savedAt, true);
+    weatherLastFetch = cachedWeather.savedAt;
+  }
   refreshWeather();
+
+  $('weatherRefresh')?.addEventListener('click', refreshWeather);
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible' && Date.now() - weatherLastFetch > 15 * 60 * 1000) {
+      refreshWeather();
+    }
+  });
+
   setInterval(() => renderClock(), 10000);
   setInterval(refreshWeather, 15 * 60 * 1000);
 })();

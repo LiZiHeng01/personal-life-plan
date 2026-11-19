@@ -127,7 +127,7 @@
       "city": "青岛",
       "adcode": "370200",
       "url": "https://uapis.cn/api/v1/misc/weather?adcode=370200",
-      "sourceName": "天气来源",
+      "sourceName": "来源",
       "sourceUrl": "https://uapis.cn/docs/api-reference/get-misc-weather"
     },
     "titles": {
@@ -144,7 +144,10 @@
           { "src": "assets/img/kobe-1.jpg", "source": "https://www.nicekicks.com/every-sneaker-kobe-bryant-played/", "credit": "科比 8 号时期 · Nice Kicks", "license": "版权归原作者/媒体所有，仅个人浏览使用" },
           { "src": "assets/img/kobe-2.jpg", "source": "https://k.sina.cn/article_3291972494_c437838e001002b2v.html", "credit": "科比 8 号时期扣篮 · 新浪", "license": "版权归原作者/媒体所有，仅个人浏览使用" },
           { "src": "assets/img/kobe-3.jpg", "source": "https://www.kpbs.org/news/2020/01/26/basketball-legend-kobe-bryant-and-daughter-gianna", "credit": "科比 8 号时期 · Andrew D. Bernstein / Getty Images / KPBS", "license": "版权归原作者/媒体所有，仅个人浏览使用" },
-          { "src": "assets/img/kobe-4.jpg", "source": "https://www.olay.com.tr/kobe-bryantin-nbae-giris-hikayesi-film-oluyor-1496614", "credit": "科比 8 号时期比赛扣篮 · Olay", "license": "版权归原作者/媒体所有，仅个人浏览使用" }
+          { "src": "assets/img/kobe-4.jpg", "source": "https://www.olay.com.tr/kobe-bryantin-nbae-giris-hikayesi-film-oluyor-1496614", "credit": "科比 8 号时期比赛扣篮 · Olay", "license": "版权归原作者/媒体所有，仅个人浏览使用" },
+          { "src": "assets/img/kobe-5.jpg", "source": "https://baijiahao.baidu.com/s?id=1650525896634285345", "credit": "科比 8 号时期 · 百家号", "license": "版权归原作者/媒体所有，仅个人浏览使用" },
+          { "src": "assets/img/kobe-6.jpg", "source": "https://www.sohu.com/picture/343114985", "credit": "科比 8 号时期 · 搜狐", "license": "版权归原作者/媒体所有，仅个人浏览使用" },
+          { "src": "assets/img/kobe-7.jpg", "source": "http://www.sohu.com/a/161337853_405481", "credit": "科比 8 号时期投篮 · 搜狐体育", "license": "版权归原作者/媒体所有，仅个人浏览使用" }
         ]
       },
       {
@@ -153,16 +156,25 @@
         "photos": [
           { "src": "assets/img/edwards-1.jpg", "source": "https://commons.wikimedia.org/wiki/File:Anthony_Edwards.jpg", "credit": "Anthony Edwards · CCS Pictures", "license": "CC BY-SA 2.0" },
           { "src": "assets/img/edwards-2.jpg", "source": "https://commons.wikimedia.org/wiki/File:Anthony_Edwards_Georgia_(cropped).jpg", "credit": "Anthony Edwards · Katie Dugan / Gamecock Central", "license": "CC BY 2.0" },
-          { "src": "assets/img/edwards-3.jpg", "source": "https://commons.wikimedia.org/wiki/File:Anthony_Edwards_Georgia_2_(cropped).jpg", "credit": "Anthony Edwards · Katie Dugan / Gamecock Central", "license": "CC BY 2.0" }
+          { "src": "assets/img/edwards-3.jpg", "source": "https://commons.wikimedia.org/wiki/File:Anthony_Edwards_Georgia_2_(cropped).jpg", "credit": "Anthony Edwards · Katie Dugan / Gamecock Central", "license": "CC BY 2.0" },
+          { "src": "assets/img/edwards-4.jpg", "source": "http://k.sina.com.cn/article_7880068820_1d5b04ed402001h6ve.html", "credit": "安东尼·爱德华兹 · 新浪体育", "license": "版权归原作者/媒体所有，仅个人浏览使用" },
+          { "src": "assets/img/edwards-5.jpg", "source": "https://new.qq.com/omn/20220917/20220917A074LX00.html", "credit": "安东尼·爱德华兹 · 腾讯体育", "license": "版权归原作者/媒体所有，仅个人浏览使用" },
+          { "src": "assets/img/edwards-6.jpg", "source": "https://baijiahao.baidu.com/s?id=1783441125870902722", "credit": "安东尼·爱德华兹扣篮 · 百家号", "license": "版权归原作者/媒体所有，仅个人浏览使用" }
         ]
       },
       {
         "id": "mitsui",
         "label": "三井寿",
         "photos": [
-          { "src": "assets/img/mitsui-1.jpg", "source": "https://note.com/don2001/n/n74921371bff4", "credit": "三井寿 · 井上雄彦《灌篮高手》漫画分镜", "license": "版权归井上雄彦/集英社所有，仅个人浏览使用" },
-          { "src": "assets/img/mitsui-2.jpg", "source": "https://note.com/campintheair/n/ne2d336a562f4", "credit": "三井寿 · 井上雄彦《灌篮高手》漫画分镜", "license": "版权归井上雄彦/集英社所有，仅个人浏览使用" },
-          { "src": "assets/img/mitsui-3.jpg", "source": "https://note.com/coffeecandle/n/n05e6121560a7", "credit": "三井寿 · 井上雄彦《灌篮高手》漫画分镜", "license": "版权归井上雄彦/集英社所有，仅个人浏览使用" }
+          { "src": "assets/img/mitsui-1.jpg", "source": "https://baijiahao.baidu.com/s?id=1660349837363950720", "credit": "三井寿（长发时期）· 动画截图 / 百家号", "license": "版权归井上雄彦/集英社/动画制作方所有，仅个人浏览使用" },
+          { "src": "assets/img/mitsui-2.jpg", "source": "http://www.bilibili.com/video/BV13o4y1u7jz", "credit": "三井寿（回归球场）· 动画截图 / B站", "license": "版权归井上雄彦/集英社/动画制作方所有，仅个人浏览使用" },
+          { "src": "assets/img/mitsui-3.jpg", "source": "http://dy.163.com/v2/article/detail/CRR2P8LU0514DJF7.html", "credit": "三井寿 · 动画截图 / 网易", "license": "版权归井上雄彦/集英社/动画制作方所有，仅个人浏览使用" },
+          { "src": "assets/img/mitsui-4.jpg", "source": "http://huaban.com/pins/2824590159/", "credit": "三井寿 · 动画截图 / 花瓣", "license": "版权归井上雄彦/集英社/动画制作方所有，仅个人浏览使用" },
+          { "src": "assets/img/mitsui-5.jpg", "source": "http://fun.youth.cn/gnzx/202101/t20210118_12669054.htm", "credit": "三井寿「我想打篮球」· 动画截图 / 中国青年网", "license": "版权归井上雄彦/集英社/动画制作方所有，仅个人浏览使用" },
+          { "src": "assets/img/mitsui-6.jpg", "source": "http://www.zcool.com.cn/work/ZNDM1ODYwNTI=.html", "credit": "三井寿 · 动画截图 / 站酷", "license": "版权归井上雄彦/集英社/动画制作方所有，仅个人浏览使用" },
+          { "src": "assets/img/mitsui-7.jpg", "source": "http://m.sohu.com/a/253945021_99965556", "credit": "三井寿 · 彩色插画 / 搜狐", "license": "版权归井上雄彦/集英社/动画制作方所有，仅个人浏览使用" },
+          { "src": "assets/img/mitsui-8.jpg", "source": "https://baijiahao.baidu.com/s?id=1632663063545945827", "credit": "三井寿 · 彩色插画 / 百家号", "license": "版权归井上雄彦/集英社/动画制作方所有，仅个人浏览使用" },
+          { "src": "assets/img/mitsui-9.jpg", "source": "http://www.bilibili.com/read/cv1690840/", "credit": "三井寿投篮 · 彩色插画 / B站", "license": "版权归井上雄彦/集英社/动画制作方所有，仅个人浏览使用" }
         ]
       }
     ]
