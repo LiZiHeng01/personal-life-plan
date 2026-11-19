@@ -9,7 +9,7 @@
     return;
   }
 
-  const { names, gym, schedules, seasonOrder, seasonData, titles, photoCollections, weather } = data;
+  const { names, gym, schedules, seasonOrder, seasonData, titles, photoCollections, weather, meals, mealNote, market, training } = data;
   const timeZone = 'Asia/Shanghai';
   const $ = (id) => document.getElementById(id);
 
@@ -208,7 +208,7 @@
     $('dayTitle').textContent = names[selected] + ' · ' +
       (isGym ? '健身日' : selected === 5 ? '自由外出日' : selected === 6 ? '恢复日' : '非健身日');
     $('dayDesc').textContent = isGym
-      ? '训练内容由你自己决定'
+      ? '今天练什么，去「训练」页看动作表'
       : selected === 5
         ? '留给外出、兴趣和社交活动'
         : selected === 6
@@ -225,7 +225,117 @@
         /遛狗|健身|洗澡|睡眠|社交/.test(task) ||
         (current && time === current[0] && task === current[1]))
       .slice(0, 5);
-    $('preview').innerHTML = renderEntries(preview);
+    const previewBox = $('preview');
+    if (previewBox) previewBox.innerHTML = renderEntries(preview);
+    renderTodayTraining(selected);
+  }
+
+  /* ------------------------------------------------------------------
+     饮食、训练与照片墙
+     ------------------------------------------------------------------ */
+
+  function renderTodayMeals(weekday) {
+    const list = $('todayMeals');
+    if (!list || !Array.isArray(meals) || !meals.length) return;
+    const meal = meals[weekday] || meals[0];
+    const rows = [['早', meal.breakfast], ['午', meal.lunch], ['晚', meal.dinner]];
+    list.innerHTML = rows.map(([key, value]) =>
+      `<li class="today-meal"><span>${escapeHTML(key)}</span><b>${escapeHTML(value)}</b></li>`
+    ).join('');
+  }
+
+  function renderMealPlan() {
+    const box = $('mealPlan');
+    if (!box || !Array.isArray(meals)) return;
+    box.innerHTML = meals.map((meal) =>
+      `<div class="day-row${meal.gym ? ' is-gym' : ''}">` +
+      `<span class="day-name">${escapeHTML(meal.day)}${meal.gym ? '<small>健身</small>' : ''}</span>` +
+      `<span class="meal"><i>早</i>${escapeHTML(meal.breakfast)}</span>` +
+      `<span class="meal"><i>午</i>${escapeHTML(meal.lunch)}</span>` +
+      `<span class="meal"><i>晚</i>${escapeHTML(meal.dinner)}</span>` +
+      '</div>'
+    ).join('');
+
+    const note = $('mealNote');
+    if (note) note.textContent = mealNote || '';
+  }
+
+  function renderMarket() {
+    const put = (id, rows) => {
+      const box = $(id);
+      if (!box || !Array.isArray(rows)) return;
+      box.innerHTML = rows.map(([name, qty]) =>
+        `<li><b>${escapeHTML(name)}</b><i class="qty">${escapeHTML(qty)}</i></li>`
+      ).join('');
+    };
+    if (market) {
+      put('buyFruit', market.fruit);
+      put('buyVeg', market.veg);
+    }
+  }
+
+  function renderTraining() {
+    const note = $('trainNote');
+    if (note) note.textContent = training?.note || '';
+
+    const grid = $('trainDays');
+    if (grid && Array.isArray(training?.days)) {
+      grid.innerHTML = training.days.map((day) => {
+        const items = Array.isArray(day.items) && day.items.length
+          ? day.items.map((item) =>
+            `<li>${escapeHTML(item)}</li>`
+          ).join('')
+          : '<li class="ph">动作待补充</li><li class="ph">动作待补充</li><li class="ph">动作待补充</li>';
+        return `<article class="card step">` +
+          `<span class="tag">${escapeHTML(day.key)} 日</span>` +
+          `<h3>${escapeHTML(day.name)} · ${escapeHTML(day.hint)}</h3>` +
+          `<ul class="train-items">${items}</ul>` +
+          '</article>';
+      }).join('');
+    }
+    renderTodayTraining(state.selected);
+  }
+
+  function renderTodayTraining(day) {
+    const box = $('todayTraining');
+    if (!box || !Array.isArray(training?.days)) return;
+    const plan = training.days.find((item) => item.weekday === day);
+    if (plan) {
+      const filled = Array.isArray(plan.items) && plan.items.length > 0;
+      box.innerHTML =
+        `<p class="today-train-key">${escapeHTML(plan.key)} · ${escapeHTML(plan.name)}</p>` +
+        `<p class="today-train-hint">${escapeHTML(plan.hint)}</p>` +
+        `<p class="note">${filled ? '动作表已填，去「训练」页看。' : '动作表待补充，先去「训练」页把位置占好。'}</p>`;
+      return;
+    }
+    box.innerHTML =
+      '<p class="today-train-key">休息</p>' +
+      '<p class="today-train-hint">今天不练力量。</p>' +
+      '<p class="note">走路、骑车和遛狗照常，就是今天的活动量。</p>';
+  }
+
+  const allPhotos = photoCollections.flatMap((collection) =>
+    collection.photos.map((photo) => ({ ...photo, collection: collection.label }))
+  );
+
+  function renderPhotos(isoDate) {
+    const box = $('photoGallery');
+    if (!box || !allPhotos.length) return;
+    if (state.photoDate === isoDate && box.childElementCount) return;
+    state.photoDate = isoDate;
+
+    const day = Math.floor(Date.parse(isoDate + 'T00:00:00Z') / 86400000);
+    const count = Math.min(8, allPhotos.length);
+    const start = (day * 2) % allPhotos.length;
+    const picks = [];
+    for (let i = 0; i < count; i += 1) picks.push(allPhotos[(start + i) % allPhotos.length]);
+
+    box.innerHTML = picks.map((photo) =>
+      `<a class="gallery-item" href="${escapeHTML(photo.source)}" ` +
+      `target="_blank" rel="noopener noreferrer" title="${escapeHTML(photo.collection + ' · ' + photo.credit)}">` +
+      `<img src="${escapeHTML(photo.src)}" alt="${escapeHTML(photo.credit)}" loading="lazy" decoding="async">` +
+      '</a>'
+    ).join('');
   }
 
   function humanMinutes(total) {
@@ -358,6 +468,18 @@
     return '';
   }
 
+  function rideTipOf(current, temperature) {
+    const text = String(current.weather || '');
+    if (/台风|暴雨/.test(text)) return '骑车通勤：今天有台风或暴雨，改坐公交。';
+    if (/雨|雪|雷|冰雹/.test(text)) return '骑车通勤：有降水，带雨具，能坐车就坐车。';
+    const powers = String(current.wind_power || '').match(/\d+(?:\.\d+)?/g);
+    const power = powers ? Math.max(...powers.map(Number)) : NaN;
+    if (Number.isFinite(power) && power >= 6) return '骑车通勤：风大，注意侧风，海边的路慢一点。';
+    if (temperature <= 3) return '骑车通勤：气温低，多穿一件，戴手套。';
+    if (temperature >= 30) return '骑车通勤：气温高，避开正午，路上补水。';
+    return '骑车通勤：天气不错，照常骑，记得锁车。';
+  }
+
   function weatherTimeOf(current, savedAt) {
     const match = String(current.report_time || '').match(/(\d{1,2}:\d{2})/);
     if (match) return match[1];
@@ -408,6 +530,9 @@
       tip.textContent = tipText;
       tip.hidden = !tipText;
     }
+
+    const ride = $('rideTip');
+    if (ride) ride.textContent = rideTipOf(current, temperature);
 
     // 把真实天气交给背景：雨、雪、雾、大风会画出来
     if (window.LifePlanSky) {
@@ -510,6 +635,8 @@
         if (updated) updated.textContent = '点击刷新重试';
         const tip = $('weatherTip');
         if (tip) tip.hidden = true;
+        const ride = $('rideTip');
+        if (ride) ride.textContent = '骑车通勤：天气没取到，出门前看一眼窗外。';
       }
     } finally {
       weatherLoading = false;
@@ -518,37 +645,6 @@
         button.textContent = '刷新';
       }
     }
-  }
-
-  function renderPhotos(isoDate) {
-    if (state.photoDate === isoDate) return;
-    state.photoDate = isoDate;
-    const day = Math.floor(Date.parse(isoDate + 'T00:00:00Z') / 86400000);
-    document.querySelectorAll('.court-photo').forEach((card, index) => {
-      const collection = photoCollections[index];
-      const image = card.querySelector('img');
-      if (!collection || !image) return;
-
-      const show = (attempt) => {
-        const photo = collection.photos[(day + attempt) % collection.photos.length];
-        card.href = photo.source;
-        card.setAttribute('aria-label', photo.credit + '，查看来源');
-        card.classList.remove('missing');
-        image.hidden = false;
-        image.alt = photo.credit;
-        image.onerror = () => {
-          if (attempt + 1 < collection.photos.length) {
-            show(attempt + 1);
-          } else {
-            image.hidden = true;
-            card.classList.add('missing');
-          }
-        };
-        image.src = photo.src;
-      };
-
-      show(0);
-    });
   }
 
   function renderPhotoCredits() {
@@ -600,6 +696,7 @@
       state.nextEntry = next;
       renderWeek();
     }
+    renderTodayMeals(weekday);
     // 进度条和剩余时间每 10 秒刷新一次
     renderPlan();
   }
@@ -611,9 +708,10 @@
   const pageIds = Object.keys(titles);
 
   function go(pageId, push = true) {
-    const id = pageIds.includes(pageId) ? pageId : 'overview';
+    const id = pageIds.includes(pageId) ? pageId : 'today';
 
     const apply = () => {
+      document.documentElement.dataset.page = id;
       document.querySelectorAll('.page').forEach((section) => {
         section.classList.toggle('is-active', section.id === 'page-' + id);
       });
@@ -624,7 +722,7 @@
         else link.removeAttribute('aria-current');
       });
 
-      const [title, desc] = titles[id] || titles.overview;
+      const [title, desc] = titles[id] || titles.today;
       $('pagetitle').textContent = title;
       $('pagedesc').textContent = desc;
       document.title = title + ' · 青岛生活计划';
@@ -744,7 +842,7 @@
     if (!action) return;
     if (action.dataset.action === 'today') {
       if (state.currentWeekday !== null) pick(state.currentWeekday);
-      go('schedule');
+      go('today');
     } else if (action.dataset.action === 'go') {
       go(action.dataset.target);
     }
@@ -767,6 +865,9 @@
   renderSeason();
   renderPhotoCredits();
   renderWeatherSource();
+  renderMealPlan();
+  renderMarket();
+  renderTraining();
   renderClock(true);
   go(location.hash.slice(1), false);
 

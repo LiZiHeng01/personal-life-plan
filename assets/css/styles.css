@@ -178,7 +178,7 @@ button { font: inherit; cursor: pointer; }
   white-space: nowrap;
 }
 
-.brand-mark { border-radius: 9px; flex: none; }
+.brand-mark { width: 30px; height: 30px; flex: none; color: var(--ink); }
 
 .brand strong {
   font-family: var(--serif);
@@ -1048,6 +1048,89 @@ html[data-scrubbing] .clock { color: var(--accent); }
 .twocol + .card { margin-top: 14px; }
 .card-principles + .card { margin-top: 14px; }
 
+/* --------------------------------------------------- 今天 · 饮食 · 训练 */
+
+/* 非「今天」页把大时钟收小，把首屏让给内容 */
+html:not([data-page="today"]) .clock { font-size: clamp(48px, 7vw, 92px); }
+html:not([data-page="today"]) .now,
+html:not([data-page="today"]) .scrub-hint { display: none; }
+html:not([data-page="today"]) .hero { padding-bottom: 10px; }
+
+.ride-tip {
+  margin: 12px 0 0;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: var(--panel-2);
+  font-size: 11.5px;
+  line-height: 1.6;
+  color: var(--ink-2);
+}
+
+.today-meals { list-style: none; margin: 0; padding: 0; display: grid; gap: 11px; }
+
+.today-meal { display: grid; grid-template-columns: 22px minmax(0, 1fr); gap: 8px; align-items: baseline; }
+
+.today-meal span {
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: .08em;
+  color: var(--accent);
+}
+
+.today-meal b { font-size: 12.5px; font-weight: 600; line-height: 1.55; color: var(--ink-2); }
+
+.today-train-key { margin: 0; font-family: var(--serif); font-size: 24px; font-weight: 700; line-height: 1.1; }
+.today-train-hint { margin: 5px 0 0; font-size: 12.5px; color: var(--muted); }
+
+.talk-line {
+  margin: 0 0 16px;
+  font-family: var(--serif);
+  font-size: clamp(17px, 2vw, 22px);
+  font-weight: 700;
+  line-height: 1.55;
+  text-wrap: balance;
+}
+
+.train-items { list-style: none; margin: 12px 0 0; padding: 0; display: grid; gap: 7px; }
+.train-items li { position: relative; padding-left: 14px; font-size: 12.5px; line-height: 1.5; color: var(--ink-2); }
+.train-items li::before { content: ""; position: absolute; left: 0; top: .62em; width: 5px; height: 1px; background: var(--accent); }
+.train-items .ph { color: var(--muted); }
+.train-items .ph::before { background: var(--line-strong); }
+
+/* 照片墙：一次 8 张，每天换一组 */
+.gallery { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+
+.gallery-item {
+  position: relative;
+  display: block;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  border-radius: 12px;
+  background: var(--panel-2);
+}
+
+.gallery-item img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform var(--t-med) var(--ease);
+}
+
+.gallery-item:hover img,
+.gallery-item:focus-visible img { transform: scale(1.045); }
+
+.gallery-item::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: inset 0 0 0 1px var(--line);
+  pointer-events: none;
+}
+
+.credits .season-head { margin-top: 16px; }
+
 .mealplan { display: grid; gap: 8px; }
 
 .day-row {
@@ -1202,6 +1285,7 @@ html[data-scrubbing] .clock { color: var(--accent); }
   .editorial { grid-template-columns: minmax(0, 1fr); }
   .phasegrid, .activitygrid, .steps { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .season-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .gallery { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .card-principles .rules { grid-template-columns: minmax(0, 1fr); }
   .card, .now { backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
 }
@@ -1231,6 +1315,7 @@ html[data-scrubbing] .clock { color: var(--accent); }
   .plate-item span:last-child { margin-top: 0; }
   .day-row { grid-template-columns: minmax(0, 1fr); gap: 5px; }
   .meal { display: block; }
+  .gallery { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
 }
 
 /* ------------------------------------------------------------------ 打印 */

@@ -131,10 +131,51 @@
       "sourceUrl": "https://uapis.cn/docs/api-reference/get-misc-weather"
     },
     "titles": {
-      "overview": ["我的生活手账", "青岛的作息、健身和一点自己的时间"],
-      "schedule": ["每日作息", "工作日精确安排，周末保留自由"],
-      "social": ["社交拓展计划", "从慢热到熟悉，不强迫自己突然外向"],
-      "habits": ["习惯与个人护理", "一周怎么吃、怎么买，和瘦脸的实话"]
+      "today": ["今天", "现在做什么、今天吃什么、今天练不练"],
+      "eat": ["饮食", "一周怎么吃、怎么点、买什么"],
+      "train": ["训练", "每周三次，动作表先留好位置"],
+      "social": ["社交", "每周一个动作，慢慢认识人"]
+    },
+    "navLabels": {
+      "today": "今天",
+      "eat": "饮食",
+      "train": "训练",
+      "social": "社交"
+    },
+    "meals": [
+      { "day": "周一", "gym": true, "breakfast": "蛋 · 奶 · 香蕉", "lunch": "鸡腿饭 + 青菜", "dinner": "鸡胸 + 西兰花 + 半碗饭" },
+      { "day": "周二", "gym": false, "breakfast": "蛋 · 豆浆 · 苹果", "lunch": "番茄牛腩饭 + 青菜", "dinner": "虾 + 菠菜 + 半碗饭" },
+      { "day": "周三", "gym": true, "breakfast": "蛋 · 奶 · 橙子", "lunch": "卤肉饭 + 青菜（少浇汁）", "dinner": "鸡胸 + 黄瓜 + 半碗饭" },
+      { "day": "周四", "gym": false, "breakfast": "蛋 · 豆浆 · 猕猴桃", "lunch": "黄焖鸡 + 青菜", "dinner": "豆腐 + 番茄 + 半碗饭" },
+      { "day": "周五", "gym": true, "breakfast": "蛋 · 奶 · 香蕉", "lunch": "牛肉面 + 一份青菜", "dinner": "鱼 + 西兰花 + 半碗饭" },
+      { "day": "周六", "gym": false, "breakfast": "蛋 · 奶 · 水果", "lunch": "外食：先点蛋白和菜", "dinner": "火锅烧烤：先肉菜、少蘸料" },
+      { "day": "周日", "gym": false, "breakfast": "蛋 · 奶 · 水果", "lunch": "番茄炒蛋 + 青菜 + 饭", "dinner": "豆腐或鸡胸 + 黄瓜" }
+    ],
+    "mealNote": "加餐：水果一个，或无糖酸奶。健身日主食可以多半个拳头。",
+    "market": {
+      "fruit": [
+        ["香蕉", "1 把 · 5–6 根"],
+        ["橘子 / 橙子", "5 个"],
+        ["苹果", "3 个"],
+        ["猕猴桃 / 梨", "1–2 个"],
+        ["圣女果 或 蓝莓", "1 盒"]
+      ],
+      "veg": [
+        ["黄瓜", "3 根（可生吃）"],
+        ["圣女果", "1 盒"],
+        ["胡萝卜", "2 根（切条生吃）"],
+        ["冷冻西兰花", "1 袋（微波 3 分钟）"],
+        ["无糖酸奶", "4 杯"],
+        ["卤蛋 / 即食鸡胸", "5 份"]
+      ]
+    },
+    "training": {
+      "note": "动作表先留空：在 assets/js/data.js 的 training.days[].items 里填，页面会自动显示；没填时这里显示占位。",
+      "days": [
+        { "key": "A", "name": "推", "hint": "胸 · 肩 · 三头", "weekday": 0, "items": [] },
+        { "key": "B", "name": "拉", "hint": "背 · 二头 · 核心", "weekday": 2, "items": [] },
+        { "key": "C", "name": "腿", "hint": "腿 · 臀 · 核心", "weekday": 4, "items": [] }
+      ]
     },
     "photoCollections": [
       {
