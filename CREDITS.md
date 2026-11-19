@@ -31,6 +31,12 @@
 | `assets/img/mitsui-2.jpg` | [note.com/campintheair](https://note.com/campintheair/n/ne2d336a562f4) | 《灌篮高手》漫画分镜；下载时由 PNG 转为 JPEG |
 | `assets/img/mitsui-3.jpg` | [note.com/coffeecandle](https://note.com/coffeecandle/n/n05e6121560a7) | 《灌篮高手》漫画分镜 |
 
+## 天气数据
+
+- 城市：青岛（adcode `370200`）
+- 接口：[uapis.cn 天气 API](https://uapis.cn/docs/api-reference/get-misc-weather)
+- 用途：显示当前天气、气温、风力和湿度；页面每 15 分钟请求一次。天气数据的准确性以服务提供方为准。
+
 ## 站点资源
 
 - `assets/img/logo.svg`：为本页面绘制的原创 SVG 标志。

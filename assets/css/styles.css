@@ -137,10 +137,22 @@ main { margin-left: 226px; max-width: 1450px; padding-top: 38px; }
 .local-clock { padding-left: 24px; }
 .local-clock time { color: var(--ink); font-weight: 750; }
 .local-clock time { font-size: 20px; font-variant-numeric: tabular-nums; }
+.local-weather {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  flex-wrap: wrap;
+}
+.weather-copy { min-width: 0; }
+.weather-copy strong { color: var(--ink); font-weight: 750; }
+.weather-copy #localWeather { color: var(--muted); font-size: 12px; line-height: 1.5; }
+.local-weather a { color: var(--muted); font-size: 11px; }
 
 @media (max-width: 550px) {
-  .local-status { padding: 12px; gap: 8px 12px; }
-  
+  .local-status { padding: 12px; gap: 10px 12px; }
+  .local-weather { width: 100%; }
+  .local-weather a { margin-left: 27px; }
 }
 
 .entry.current {

@@ -9,7 +9,7 @@
     return;
   }
 
-  const { names, gym, schedules, seasonOrder, seasonData, titles, photoCollections } = data;
+  const { names, gym, schedules, seasonOrder, seasonData, titles, photoCollections, weather } = data;
   const timeZone = 'Asia/Shanghai';
   const $ = (id) => document.getElementById(id);
 
@@ -43,11 +43,12 @@
     timeZone, year: 'numeric', month: '2-digit', day: '2-digit'
   });
 
+  // 按青岛气候划分：春4–5月、夏6–9月、秋10–11月、冬12–3月。
   const autoSeason = (() => {
     const month = Number(new Intl.DateTimeFormat('en-US', { timeZone, month: 'numeric' }).format(new Date()));
-    if (month >= 3 && month <= 5) return 'spring';
-    if (month >= 6 && month <= 8) return 'summer';
-    if (month >= 9 && month <= 11) return 'autumn';
+    if (month >= 4 && month <= 5) return 'spring';
+    if (month >= 6 && month <= 9) return 'summer';
+    if (month >= 10 && month <= 11) return 'autumn';
     return 'winter';
   })();
 
@@ -93,20 +94,24 @@
 
       if (value.includes('晨间遛狗')) {
         if (season === 'winter') value = '晨间遛狗（视风力气温10–30分钟；剩余时间室内陪狗）';
-        if (season === 'summer') value = '清晨遛狗（避暑，带水；炎热时缩短）';
+        else if (season === 'summer') value = '清晨遛狗（避暑，带水；炎热时缩短）';
+        else if (season === 'spring') value = '晨间遛狗（海雾或大风时缩短）';
+        else if (season === 'autumn') value = '晨间遛狗（风大时缩短）';
       } else if (/^遛狗(25|30)分钟$/.test(value)) {
         if (season === 'winter') value = '晚间遛狗（照明好、避风；按气温和风力15–25分钟）';
-        if (season === 'summer') value = '晚间遛狗（避开热地面，带水）';
+        else if (season === 'summer') value = '晚间遛狗（避开热地面，带水）';
+        else if (season === 'spring') value = '晚间遛狗（海风大时缩短）';
+        else if (season === 'autumn') value = '晚间遛狗（风大时缩短）';
       } else if (/^遛狗(40|45)分钟$/.test(value)) {
         if (season === 'winter') value = '白天遛狗（按气温和风力20–40分钟）';
-        if (season === 'summer') value = '清晨遛狗（避开高温，必要时缩短）';
+        else if (season === 'summer') value = '清晨遛狗（避开高温，必要时缩短）';
       }
 
       if (value.includes('城市探索或参加社交活动')) {
-        if (season === 'winter') value = '优先白天/室内社交，寒冷大风时减少户外停留';
-        else if (season === 'summer') value = '室内社交或避暑活动；户外优先凉爽时段';
-        else if (season === 'spring') value = '户外或室内社交，留意风力和花粉';
-        else if (season === 'autumn') value = '尽量利用下午日光参加活动';
+        if (season === 'winter') value = '优先白天/室内社交，寒潮或大风时减少户外停留';
+        else if (season === 'summer') value = '室内社交或避暑活动；留意台风、雷雨和海雾';
+        else if (season === 'spring') value = '户外或室内社交，留意海雾和大风';
+        else if (season === 'autumn') value = '利用下午日光参加活动，海边注意防风';
       }
 
       return [time, value];
@@ -246,8 +251,8 @@
 
   function renderSeason() {
     const current = seasonData[season];
-    $('seasonTitle').textContent = current.name + ' · 生活建议';
-    $('seasonSubtitle').textContent = current.desc + (seasonChoice === 'auto' ? ' · 自动识别' : ' · 手动预览');
+    $('seasonTitle').textContent = '青岛 · ' + current.name + '生活建议';
+    $('seasonSubtitle').textContent = current.desc + (seasonChoice === 'auto' ? ' · 按青岛气候自动识别' : ' · 手动预览');
 
     const autoButton = `<button type="button" data-season="auto" aria-pressed="${seasonChoice === 'auto'}" class="${seasonChoice === 'auto' ? 'active' : ''}">自动</button>`;
     const seasonButtons = seasonOrder.map((key) =>
@@ -263,7 +268,59 @@
       `<div class="season-tip"><b>${icon} ${escapeHTML(label)}</b><p>${escapeHTML(text)}</p></div>`
     ).join('');
 
-    $('scheduleSeason').textContent = current.name + '作息提示：' + current.walk;
+    $('scheduleSeason').textContent = '青岛' + current.name + '作息提示：' + current.walk;
+  }
+
+  /* ------------------------------------------------------------------
+     青岛天气
+     ------------------------------------------------------------------ */
+
+  function renderWeatherSource() {
+    if (!weather) return;
+    const city = $('weatherCity');
+    const source = $('weatherSource');
+    if (city) city.textContent = weather.city;
+    if (source) {
+      source.href = weather.sourceUrl;
+      source.textContent = weather.sourceName || '天气来源';
+    }
+  }
+
+  async function refreshWeather() {
+    const target = $('localWeather');
+    if (!target || !weather) return;
+
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 12000);
+    try {
+      const response = await fetch(weather.url, {
+        signal: controller.signal,
+        headers: { Accept: 'application/json' }
+      });
+      if (!response.ok) throw new Error('天气服务不可用');
+      const current = await response.json();
+      if (String(current.adcode) !== String(weather.adcode)) throw new Error('城市数据不匹配');
+
+      const temperature = Number(current.temperature);
+      if (!Number.isFinite(temperature) || typeof current.weather !== 'string' || !current.weather.trim()) {
+        throw new Error('天气数据不完整');
+      }
+
+      const details = [current.weather.trim() + ' ' + Math.round(temperature) + '°C'];
+      if (current.wind_direction && current.wind_power) {
+        details.push(current.wind_direction + ' ' + current.wind_power + '级');
+      }
+      const humidity = Number(current.humidity);
+      if (Number.isFinite(humidity)) details.push('湿度 ' + Math.round(humidity) + '%');
+
+      target.textContent = details.join(' · ');
+      target.title = current.report_time ? '更新时间 ' + current.report_time : '';
+    } catch {
+      target.textContent = '天气暂不可用';
+      target.title = '';
+    } finally {
+      clearTimeout(timeout);
+    }
   }
 
   function renderPhotos(isoDate) {
@@ -365,7 +422,7 @@
     const [title, desc] = titles[id] || titles.overview;
     $('pagetitle').textContent = title;
     $('pagedesc').textContent = desc;
-    document.title = title + ' · 生活计划';
+    document.title = title + ' · 青岛生活计划';
 
     if (push && location.hash.slice(1) !== id) {
       try {
@@ -455,7 +512,10 @@
 
   renderSeason();
   renderPhotoCredits();
+  renderWeatherSource();
   renderClock(true);
   go(location.hash.slice(1), false);
+  refreshWeather();
   setInterval(() => renderClock(), 10000);
+  setInterval(refreshWeather, 15 * 60 * 1000);
 })();
