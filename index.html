@@ -9,13 +9,17 @@
   <meta name="theme-color" content="#12110f" media="(prefers-color-scheme: dark)">
   <link rel="icon" type="image/svg+xml" href="assets/img/logo.svg">
   <script>
-    /* 在样式表生效前先打上主题类，避免深色模式首屏闪白 */
+    /* 在样式表生效前先定好主题，避免首屏闪白：
+       自动模式按青岛当前小时判断（19 点后、6 点前算夜里） */
     try {
-      var savedTheme = localStorage.getItem('lifeplan-theme');
-      var useDark = savedTheme
-        ? savedTheme === 'dark'
-        : window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-      if (useDark) document.documentElement.classList.add('dark');
+      var savedTheme = localStorage.getItem('lifeplan-theme') || 'auto';
+      var hourNow = Number(new Intl.DateTimeFormat('en-GB', {
+        timeZone: 'Asia/Shanghai', hour: '2-digit', hourCycle: 'h23'
+      }).format(new Date()));
+      var dark = savedTheme === 'dark'
+        || (savedTheme === 'auto' && (hourNow >= 19 || hourNow < 6));
+      if (dark) document.documentElement.classList.add('dark');
+      document.documentElement.dataset.theme = savedTheme;
     } catch (e) { /* 本地存储不可用时按浅色渲染 */ }
   </script>
   <link rel="stylesheet" href="assets/css/styles.css">
@@ -35,60 +39,60 @@
     <symbol id="icon-thermo" viewBox="0 0 24 24"><path d="M10 13.8V5.6a2.4 2.4 0 0 1 4.8 0v8.2a4.5 4.5 0 1 1-4.8 0Z"/><path d="M12.4 9v6"/></symbol>
     <symbol id="icon-strength" viewBox="0 0 24 24"><path d="M8.5 12h7M5 7.5h2.4v9H5zM16.6 7.5H19v9h-2.4zM2.5 10v4m19-4v4"/></symbol>
     <symbol id="icon-calendar" viewBox="0 0 24 24"><rect x="3.2" y="5" width="17.6" height="16" rx="3.4"/><path d="M3.2 10.2h17.6M8.4 3v4m7.2-4v4"/></symbol>
+    <symbol id="icon-auto" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.2"/><path d="M12 3.8v16.4"/><path d="M12 3.8a8.2 8.2 0 0 1 0 16.4z" fill="currentColor" stroke="none"/></symbol>
   </svg>
 
-  <header class="site-head" id="siteHead">
+  <canvas class="sky" id="sky" aria-hidden="true"></canvas>
+  <div class="cursor-glow" id="cursorGlow" aria-hidden="true"></div>
+  <div class="grain" aria-hidden="true"></div>
+  <div class="progress-rail" aria-hidden="true"><i id="scrollProgress"></i></div>
+
+  <header class="topbar">
     <a class="brand" href="#overview" data-page="overview" aria-label="回到总览">
-      <img class="brand-mark" src="assets/img/logo.svg" alt="" width="34" height="34">
-      <span class="brand-text">
-        <strong>青岛生活计划</strong>
-        <small>个人手账</small>
-      </span>
+      <img class="brand-mark" src="assets/img/logo.svg" alt="" width="30" height="30">
+      <strong>青岛生活计划</strong>
     </a>
 
-    <nav class="site-nav" aria-label="主导航">
+    <nav class="nav" aria-label="主导航">
       <a class="nav-link is-active" href="#overview" data-page="overview" aria-current="page">总览</a>
       <a class="nav-link" href="#schedule" data-page="schedule">作息</a>
       <a class="nav-link" href="#social" data-page="social">社交</a>
       <a class="nav-link" href="#habits" data-page="habits">习惯</a>
     </nav>
 
-    <div class="head-actions">
-      <button class="icon-btn" id="theme" type="button" title="切换深色模式" aria-pressed="false">
-        <svg class="ui-icon icon-moon" aria-hidden="true" focusable="false"><use href="#icon-moon"/></svg>
-        <svg class="ui-icon icon-sun" aria-hidden="true" focusable="false"><use href="#icon-sun"/></svg>
-      </button>
-    </div>
+    <button class="theme-btn" id="theme" type="button" title="主题：跟随天色" aria-pressed="false">
+      <svg class="ui-icon icon-auto" aria-hidden="true" focusable="false"><use href="#icon-auto"/></svg>
+      <svg class="ui-icon icon-sun" aria-hidden="true" focusable="false"><use href="#icon-sun"/></svg>
+      <svg class="ui-icon icon-moon" aria-hidden="true" focusable="false"><use href="#icon-moon"/></svg>
+    </button>
   </header>
 
   <main>
-    <section class="masthead">
-      <div class="masthead-main">
-        <div class="dateline">
-          <svg class="ui-icon" aria-hidden="true" focusable="false"><use href="#icon-calendar"/></svg>
-          <time id="todayDate" class="micro"></time>
-          <span class="sep"></span>
-          <svg class="ui-icon" aria-hidden="true" focusable="false"><use href="#icon-pin"/></svg>
-          <span class="micro">青岛</span>
-        </div>
-        <h1 class="display" id="pagetitle">我的生活手账</h1>
-        <p class="lede" id="pagedesc">青岛的作息、健身和一点自己的时间</p>
-        <div class="now-strip" aria-live="polite">
-          <div class="now-head">
-            <span class="now-label" id="planLabel">现在</span>
-            <span class="now-task" id="planTask">正在读取作息…</span>
-          </div>
-          <div class="now-track">
-            <div class="bar"><i id="planProgress"></i></div>
-            <span class="now-left" id="planLeft"></span>
-          </div>
-        </div>
-      </div>
+    <section class="hero">
+      <p class="overline">
+        <span class="live" aria-hidden="true"></span>
+        <time id="todayDate"></time>
+        <span class="dot"></span>
+        <span>青岛</span>
+      </p>
 
-      <div class="masthead-side">
-        <div class="clock">
-          <time id="localClock" class="clock-time"></time>
-          <span class="clock-zone micro">北京时间</span>
+      <div class="hero-grid">
+        <time class="clock" id="localClock"></time>
+
+        <div class="hero-copy">
+          <h1 class="title" id="pagetitle">我的生活手账</h1>
+          <p class="desc" id="pagedesc">青岛的作息、健身和一点自己的时间</p>
+
+          <div class="now">
+            <div class="now-line">
+              <span class="now-label" id="planLabel">现在</span>
+              <span class="now-task" id="planTask">正在读取作息…</span>
+            </div>
+            <div class="now-line now-meta">
+              <div class="bar"><i id="planProgress"></i></div>
+              <span class="now-left" id="planLeft"></span>
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -429,6 +433,8 @@
   </nav>
 
   <script src="assets/js/data.js" defer></script>
+  <script src="assets/js/sky.js" defer></script>
   <script src="assets/js/app.js" defer></script>
+  <script src="assets/js/motion.js" defer></script>
 </body>
 </html>

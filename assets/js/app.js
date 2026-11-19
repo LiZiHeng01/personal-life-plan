@@ -408,6 +408,17 @@
       tip.textContent = tipText;
       tip.hidden = !tipText;
     }
+
+    // 把真实天气交给背景：雨、雪、雾、大风会画出来
+    if (window.LifePlanSky) {
+      const powers = String(current.wind_power || '').match(/\d+(?:\.\d+)?/g) || [];
+      window.LifePlanSky.update({
+        weatherText: text,
+        wind: powers.length ? Math.max.apply(null, powers.map(Number)) : 0,
+        hour: hourNow()
+      });
+    }
+
     weatherHasData = true;
   }
 
@@ -556,6 +567,9 @@
     const isoDate = isoDateOf(now);
     const clock = clockFormat.format(now);
 
+    // 背景天光跟着时间走
+    if (window.LifePlanSky) window.LifePlanSky.update({ hour: hourNow() });
+
     $('todayDate').textContent = dateFormat.format(now);
     $('todayDate').dateTime = isoDate;
     $('localClock').textContent = clock;
@@ -612,6 +626,8 @@
       $('pagetitle').textContent = title;
       $('pagedesc').textContent = desc;
       document.title = title + ' · 青岛生活计划';
+
+      document.dispatchEvent(new CustomEvent('lifeplan:page', { detail: { id } }));
     };
 
     if (push && location.hash.slice(1) !== id) {
@@ -650,21 +666,44 @@
     renderClock(true);
   }
 
+  /* ------------------------------------------------------------------
+     主题：跟随天色 / 浅色 / 深色 三档循环
+     ------------------------------------------------------------------ */
+
   const themeButton = $('theme');
-  function applyTheme(dark, persist) {
-    document.documentElement.classList.toggle('dark', dark);
-    themeButton.setAttribute('aria-pressed', String(dark));
-    themeButton.title = dark ? '切换浅色模式' : '切换深色模式';
-    if (persist) storage.set('lifeplan-theme', dark ? 'dark' : 'light');
+  const THEME_ORDER = ['auto', 'light', 'dark'];
+  const savedTheme = storage.get('lifeplan-theme');
+  let themeMode = THEME_ORDER.includes(savedTheme) ? savedTheme : 'auto';
+
+  function hourNow() {
+    const [hh, mm] = clockFormat.format(new Date()).split(':');
+    return Number(hh) + Number(mm) / 60;
   }
 
-  const savedTheme = storage.get('lifeplan-theme');
-  const prefersDark = window.matchMedia
-    ? window.matchMedia('(prefers-color-scheme: dark)').matches
-    : false;
-  applyTheme(savedTheme ? savedTheme === 'dark' : prefersDark, false);
+  function applyThemeMode(mode, persist) {
+    themeMode = mode;
+    const hour = hourNow();
+    const sky = window.LifePlanSky;
+    const autoDark = sky
+      ? sky.isDark(hour)
+      : (window.matchMedia ? window.matchMedia('(prefers-color-scheme: dark)').matches : false);
+    const dark = mode === 'auto' ? autoDark : mode === 'dark';
+
+    document.documentElement.classList.toggle('dark', dark);
+    document.documentElement.dataset.theme = mode;
+    themeButton.setAttribute('aria-pressed', String(dark));
+    themeButton.title = mode === 'auto' ? '主题：跟随天色' : (dark ? '主题：深色' : '主题：浅色');
+    themeButton.setAttribute('aria-label', themeButton.title);
+
+    if (sky) sky.update({ theme: mode, hour });
+    if (persist) storage.set('lifeplan-theme', mode);
+  }
+
+  applyThemeMode(themeMode, false);
+
   themeButton.addEventListener('click', () => {
-    applyTheme(!document.documentElement.classList.contains('dark'), true);
+    const next = THEME_ORDER[(THEME_ORDER.indexOf(themeMode) + 1) % THEME_ORDER.length];
+    applyThemeMode(next, true);
   });
 
   document.addEventListener('click', (event) => {
