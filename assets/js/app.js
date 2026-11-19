@@ -248,13 +248,16 @@
   function renderDiet() {
     const box = $('dietDay');
     if (!box || !diet?.day) return;
-    box.innerHTML = diet.day.map((row) =>
-      `<div class="entry${row.kind === 'water' ? ' is-water' : ''}">` +
-      `<div class="time">${escapeHTML(row.time)}</div>` +
-      '<div class="rail"><div class="dot"></div></div>' +
-      `<div class="task"><b>${escapeHTML(row.title)}</b><span>${escapeHTML(row.detail)}</span></div>` +
-      '</div>'
-    ).join('');
+    box.innerHTML = diet.day.map((row) => {
+      const alt = Array.isArray(row.alternatives) && row.alternatives.length
+        ? `<span class="alt">也可以换：${row.alternatives.map(escapeHTML).join(' ／ ')}</span>`
+        : '';
+      return `<div class="entry${row.kind === 'water' ? ' is-water' : ''}">` +
+        `<div class="time">${escapeHTML(row.time)}</div>` +
+        '<div class="rail"><div class="dot"></div></div>' +
+        `<div class="task"><b>${escapeHTML(row.title)}</b><span>${escapeHTML(row.detail)}</span>${alt}</div>` +
+        '</div>';
+    }).join('');
 
     const summary = $('dietSummary');
     if (summary) summary.textContent = diet.summary || '';

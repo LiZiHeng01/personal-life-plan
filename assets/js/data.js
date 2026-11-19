@@ -148,9 +148,9 @@
         { "kind": "water", "time": "07:00", "title": "起床先喝一杯水", "detail": "300ml，温的就行" },
         { "kind": "breakfast", "time": "08:15", "title": "早餐 · 路上买", "detail": "2 个猪肉大葱馅饼 + 1 个茶叶蛋 + 1 杯无糖豆浆" },
         { "kind": "water", "time": "10:30", "title": "上午补水", "detail": "400ml，茶也行，不加糖" },
-        { "kind": "lunch", "time": "12:00", "title": "午餐", "detail": "鸡腿饭 + 单加一份青菜，米饭吃 2/3" },
+        { "kind": "lunch", "time": "12:00", "title": "午餐", "detail": "鸡腿饭 + 单加一份青菜，米饭吃 2/3", "alternatives": ["番茄牛腩饭 + 青菜", "牛肉面 + 卤蛋 + 一份青菜", "黄焖鸡（少汁）+ 青菜 + 半碗饭"] },
         { "kind": "snack", "time": "15:30", "title": "加餐", "detail": "水果一个（香蕉 / 橘子 / 苹果）+ 300ml 水" },
-        { "kind": "dinner", "time": "19:20", "title": "晚餐", "detail": "鸡胸或鸡腿一份 + 两拳蔬菜 + 半碗饭" },
+        { "kind": "dinner", "time": "19:20", "title": "晚餐", "detail": "鸡胸或鸡腿一份 + 两拳蔬菜 + 半碗饭", "alternatives": ["鱼或虾 + 菠菜或西兰花 + 半碗饭", "豆腐 + 番茄 + 半碗饭", "牛肉汤 + 一份青菜 + 小半碗饭"] },
         { "kind": "shake", "time": "21:10", "title": "训练后 · 周一三五", "detail": "蛋白粉 1 勺 + 300ml 水或牛奶" },
         { "kind": "water", "time": "22:30", "title": "睡前", "detail": "200ml，之后不再喝" }
       ]
