@@ -586,7 +586,7 @@
 
   const themeButton = $('theme');
   function applyTheme(dark, persist) {
-    document.body.classList.toggle('dark', dark);
+    document.documentElement.classList.toggle('dark', dark);
     themeButton.setAttribute('aria-pressed', String(dark));
     themeButton.title = dark ? '切换浅色模式' : '切换深色模式';
     if (persist) storage.set('lifeplan-theme', dark ? 'dark' : 'light');
@@ -598,7 +598,7 @@
     : false;
   applyTheme(savedTheme ? savedTheme === 'dark' : prefersDark, false);
   themeButton.addEventListener('click', () => {
-    applyTheme(!document.body.classList.contains('dark'), true);
+    applyTheme(!document.documentElement.classList.contains('dark'), true);
   });
 
   document.addEventListener('click', (event) => {

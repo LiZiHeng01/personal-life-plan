@@ -8,6 +8,16 @@
   <meta name="theme-color" content="#f5f0e7" media="(prefers-color-scheme: light)">
   <meta name="theme-color" content="#131d18" media="(prefers-color-scheme: dark)">
   <link rel="icon" type="image/svg+xml" href="assets/img/logo.svg">
+  <script>
+    /* 在样式表生效前先打上主题类，避免深色模式首屏闪白 */
+    try {
+      var savedTheme = localStorage.getItem('lifeplan-theme');
+      var useDark = savedTheme
+        ? savedTheme === 'dark'
+        : window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+      if (useDark) document.documentElement.classList.add('dark');
+    } catch (e) { /* 本地存储不可用时按浅色渲染 */ }
+  </script>
   <link rel="stylesheet" href="assets/css/styles.css">
 </head>
 <body>
