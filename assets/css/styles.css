@@ -381,6 +381,57 @@ html.dark .clock { text-shadow: 0 2px 60px rgba(120, 170, 255, .18); }
   white-space: nowrap;
 }
 
+.scrub-hint {
+  margin: 12px 0 0;
+  font-size: 10.5px;
+  letter-spacing: .08em;
+  color: var(--muted);
+  opacity: .85;
+}
+
+/* 时间穿越：拖动时跟着指针的时间牌 */
+.timetravel {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 80;
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  padding: 6px 12px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--panel);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  color: var(--ink);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 180ms var(--ease);
+}
+
+.timetravel.on { opacity: 1; }
+
+.timetravel b {
+  font-family: var(--serif);
+  font-size: 15px;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -.01em;
+}
+
+.timetravel span {
+  font-size: 10.5px;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+html[data-scrubbing] { cursor: ew-resize; }
+html[data-scrubbing] .hero,
+html[data-scrubbing] .hero * { cursor: ew-resize; }
+html[data-scrubbing] body { user-select: none; }
+html[data-scrubbing] .clock { color: var(--accent); }
+
 /* ------------------------------------------------------------ 页面与卡片 */
 
 .page { display: none; padding-bottom: 8px; }

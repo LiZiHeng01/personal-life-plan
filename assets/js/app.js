@@ -572,8 +572,10 @@
 
     $('todayDate').textContent = dateFormat.format(now);
     $('todayDate').dateTime = isoDate;
-    $('localClock').textContent = clock;
-    $('localClock').dateTime = clock;
+    if (!document.documentElement.dataset.scrubbing) {
+      $('localClock').textContent = clock;
+      $('localClock').dateTime = clock;
+    }
     renderPhotos(isoDate);
 
     const weekday = weekdayOf(isoDate);
@@ -705,6 +707,14 @@
     const next = THEME_ORDER[(THEME_ORDER.indexOf(themeMode) + 1) % THEME_ORDER.length];
     applyThemeMode(next, true);
   });
+
+  // 给交互层（时间穿越）留的入口
+  window.LifePlanApp = {
+    hour: hourNow,
+    themeMode: () => themeMode,
+    applyTheme: (mode) => applyThemeMode(mode || themeMode, false),
+    refresh: () => renderClock(true)
+  };
 
   document.addEventListener('click', (event) => {
     const dayButton = event.target.closest('[data-day]');

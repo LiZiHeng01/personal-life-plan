@@ -1,4 +1,4 @@
-/* 交互层
+﻿/* 交互层
    指针跟随的光斑、卡片 3D 倾斜、磁吸元素、滚动进度、标题逐字入场。
    所有效果都在 prefers-reduced-motion 或触屏环境下自动关闭。 */
 (() => {
@@ -172,4 +172,91 @@
   }
 
   revealTitle();
+
+  /* --------------------------------------------------- 时间穿越（拖动天色） */
+
+  const hero = document.querySelector('.hero');
+  const travel = document.getElementById('timetravel');
+  const travelTime = document.getElementById('timetravelTime');
+  const travelPhase = document.getElementById('timetravelPhase');
+  const clockEl = document.getElementById('localClock');
+
+  const PHASES = [
+    [5, '深夜'], [7, '清晨'], [11, '上午'], [13, '正午'],
+    [17, '下午'], [19, '黄昏'], [23, '夜晚'], [24, '深夜']
+  ];
+
+  function phaseOf(hour) {
+    for (const [until, name] of PHASES) {
+      if (hour < until) return name;
+    }
+    return '深夜';
+  }
+
+  function pad(n) { return String(n).padStart(2, '0'); }
+
+  let scrubbing = false;
+  let returnTimer = 0;
+  let travelX = 0;
+  let travelY = 0;
+
+  function paintTravel() {
+    if (!travel) return;
+    travel.style.transform = 'translate(' + travelX + 'px,' + travelY + 'px)';
+  }
+
+  function applyHour(hour) {
+    if (!window.LifePlanSky) return;
+    window.LifePlanSky.update({ hour, theme: 'auto' });
+    root.classList.toggle('dark', window.LifePlanSky.isDark(hour));
+    const total = Math.round(hour * 60) % 1440;
+    const hh = pad(Math.floor(total / 60));
+    const mm = pad(total % 60);
+    if (travelTime) travelTime.textContent = hh + ':' + mm;
+    if (travelPhase) travelPhase.textContent = phaseOf(hour);
+    if (clockEl) {
+      clockEl.textContent = hh + ':' + mm;
+      clockEl.classList.add('scrubbing');
+    }
+  }
+
+  function beginScrub(event) {
+    if (!finePointer || reduceMotion || !hero) return;
+    if (event.target.closest('a, button, .now, .card, .credits')) return;
+    scrubbing = true;
+    window.clearTimeout(returnTimer);
+    root.dataset.scrubbing = '1';
+    if (travel) travel.classList.add('on');
+    updateScrub(event);
+  }
+
+  function updateScrub(event) {
+    if (!scrubbing) return;
+    const ratio = clamp(event.clientX / window.innerWidth, 0, 1);
+    travelX = event.clientX;
+    travelY = event.clientY - 54;
+    paintTravel();
+    applyHour(ratio * 24);
+  }
+
+  function endScrub() {
+    if (!scrubbing) return;
+    scrubbing = false;
+    if (travel) travel.classList.remove('on');
+    returnTimer = window.setTimeout(() => {
+      root.dataset.scrubbing = '';
+      if (clockEl) clockEl.classList.remove('scrubbing');
+      if (window.LifePlanApp) {
+        window.LifePlanApp.applyTheme(window.LifePlanApp.themeMode());
+        window.LifePlanApp.refresh();
+      }
+    }, 700);
+  }
+
+  if (hero) {
+    hero.addEventListener('pointerdown', beginScrub);
+    window.addEventListener('pointermove', updateScrub, { passive: true });
+    window.addEventListener('pointerup', endScrub);
+    window.addEventListener('pointercancel', endScrub);
+  }
 })();

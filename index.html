@@ -47,6 +47,11 @@
   <div class="grain" aria-hidden="true"></div>
   <div class="progress-rail" aria-hidden="true"><i id="scrollProgress"></i></div>
 
+  <div class="timetravel" id="timetravel" aria-hidden="true">
+    <b id="timetravelTime">--:--</b>
+    <span id="timetravelPhase">拖动中</span>
+  </div>
+
   <header class="topbar">
     <a class="brand" href="#overview" data-page="overview" aria-label="回到总览">
       <img class="brand-mark" src="assets/img/logo.svg" alt="" width="30" height="30">
@@ -93,6 +98,8 @@
               <span class="now-left" id="planLeft"></span>
             </div>
           </div>
+
+          <p class="scrub-hint">按住空白处左右拖动，看看一整天的光</p>
         </div>
       </div>
     </section>

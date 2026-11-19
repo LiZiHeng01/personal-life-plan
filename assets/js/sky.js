@@ -41,12 +41,31 @@
   let rafId = 0;
   let lastTime = 0;
   let dirty = true;
-  const pointer = { x: 0, y: 0 };
+  const pointer = { x: 0, y: 0, px: -999, py: -999, over: false };
 
   window.addEventListener('pointermove', (event) => {
     pointer.x = (event.clientX / window.innerWidth - 0.5) * 2;
     pointer.y = (event.clientY / window.innerHeight - 0.5) * 2;
+    pointer.px = event.clientX;
+    pointer.py = event.clientY;
+    pointer.over = true;
   }, { passive: true });
+
+  window.addEventListener('pointerleave', () => { pointer.over = false; }, { passive: true });
+
+  /* 指针经过时把雨丝、雪片、尘点搅开一点 */
+  function stir(p, dt) {
+    if (!pointer.over) return;
+    const dx = p.x - pointer.px;
+    const dy = p.y - pointer.py;
+    const dist2 = dx * dx + dy * dy;
+    const radius = 160;
+    if (dist2 > radius * radius) return;
+    const dist = Math.sqrt(dist2) || 1;
+    const push = (1 - dist / radius) * dt * 0.5;
+    p.x += (dx / dist) * push;
+    p.y += (dy / dist) * push;
+  }
 
   const clamp = (v, min, max) => Math.min(max, Math.max(min, v));
   const rand = (a, b) => a + Math.random() * (b - a);
@@ -102,15 +121,15 @@
     return { c: anchor.c.slice(), dark: anchor.dark, star: anchor.star };
   }
 
-  /* 太阳/月亮在天上的位置 */
+  /* 太阳/月亮在天上的位置：固定在上半屏右侧，避开左侧的巨型时钟 */
   function bodyPosition(dark) {
     const start = dark ? 18.6 : 6.2;
     const len = dark ? 11.6 : 12.4;
     let p = (((state.hour - start) % 24) + 24) % 24 / len;
     p = clamp(p, 0, 1);
     return {
-      x: w * (0.1 + 0.8 * p),
-      y: h * (0.66 - 0.5 * Math.sin(Math.PI * p)),
+      x: w * (0.52 + 0.38 * p),
+      y: h * (0.34 - 0.26 * Math.sin(Math.PI * p)),
       p
     };
   }
@@ -189,24 +208,50 @@
   function drawBody(palette) {
     const pos = bodyPosition(palette.dark);
     // 光斑跟着指针轻微移动，背景就有了纵深
-    const shiftX = pointer.x * 26;
-    const shiftY = pointer.y * 18;
-    const radius = Math.min(w, h) * (palette.dark ? 0.3 : 0.42);
-    const g = ctx.createRadialGradient(
-      pos.x + shiftX, pos.y + shiftY, 0,
-      pos.x + shiftX, pos.y + shiftY, radius
-    );
-    const core = palette.dark ? 'rgba(190, 210, 255, 0.30)' : 'rgba(255, 236, 200, 0.62)';
-    const edge = palette.dark ? 'rgba(140, 170, 235, 0.10)' : 'rgba(255, 214, 160, 0.14)';
-    g.addColorStop(0, core);
-    g.addColorStop(0.45, edge);
-    g.addColorStop(1, 'rgba(0,0,0,0)');
-    ctx.fillStyle = g;
+    const cx = pos.x + pointer.x * 26;
+    const cy = pos.y + pointer.y * 18;
+
+    // 外圈弥散光
+    const glowRadius = Math.min(w, h) * (palette.dark ? 0.36 : 0.5);
+    const glow = ctx.createRadialGradient(cx, cy, 0, cx, cy, glowRadius);
+    glow.addColorStop(0, palette.dark ? 'rgba(198, 214, 255, .34)' : 'rgba(255, 236, 198, .70)');
+    glow.addColorStop(0.3, palette.dark ? 'rgba(150, 178, 240, .16)' : 'rgba(255, 214, 150, .28)');
+    glow.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.fillStyle = glow;
     ctx.fillRect(0, 0, w, h);
+
+    // 太阳 / 月亮本体
+    const disc = Math.min(w, h) * (palette.dark ? 0.03 : 0.034);
+    ctx.beginPath();
+    ctx.arc(cx, cy, disc, 0, Math.PI * 2);
+    ctx.fillStyle = palette.dark ? 'rgba(247, 248, 236, .97)' : 'rgba(255, 246, 214, .98)';
+    ctx.fill();
+
+    // 月亮的暗面与光环，让它看起来是个球体
+    if (palette.dark) {
+      ctx.beginPath();
+      ctx.arc(cx - disc * 0.3, cy + disc * 0.16, disc * 0.84, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(224, 229, 222, .55)';
+      ctx.fill();
+
+      ctx.beginPath();
+      ctx.arc(cx, cy, disc * 1.6, 0, Math.PI * 2);
+      ctx.strokeStyle = 'rgba(230, 238, 255, .18)';
+      ctx.lineWidth = 1;
+      ctx.stroke();
+    } else {
+      // 太阳的一圈热浪
+      ctx.beginPath();
+      ctx.arc(cx, cy, disc * 1.28, 0, Math.PI * 2);
+      ctx.strokeStyle = 'rgba(255, 226, 170, .5)';
+      ctx.lineWidth = 1.4;
+      ctx.stroke();
+    }
   }
 
   function stepAndDrawParticles(dt) {
     const windPush = state.wind * 6;
+    for (const p of particles) stir(p, dt);
     ctx.save();
 
     if (state.kind === 'rain') {
@@ -292,8 +337,8 @@
     ctx.fillStyle = sky;
     ctx.fillRect(0, 0, w, h);
 
-    drawBody(palette);
     drawStars(palette);
+    drawBody(palette);
   }
 
   function frame(time) {
