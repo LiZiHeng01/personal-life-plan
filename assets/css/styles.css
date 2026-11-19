@@ -1079,6 +1079,16 @@ html:not([data-page="today"]) .hero { padding-bottom: 10px; }
 
 .today-meal b { font-size: 12.5px; font-weight: 600; line-height: 1.55; color: var(--ink-2); }
 
+.diet-timeline .entry { padding: 9px 8px; }
+
+.diet-timeline .task b { display: block; font-size: 13px; font-weight: 650; }
+
+.diet-timeline .task span { display: block; margin-top: 2px; font-size: 12px; line-height: 1.55; color: var(--muted); }
+
+.diet-timeline .entry.is-water .dot { background: var(--line-strong); }
+
+.diet-timeline .entry.is-water .task b { font-weight: 600; color: var(--ink-2); }
+
 .today-train-key { margin: 0; font-family: var(--serif); font-size: 24px; font-weight: 700; line-height: 1.1; }
 .today-train-hint { margin: 5px 0 0; font-size: 12.5px; color: var(--muted); }
 

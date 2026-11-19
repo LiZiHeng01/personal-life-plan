@@ -236,45 +236,28 @@
 
   function renderTodayMeals(weekday) {
     const list = $('todayMeals');
-    if (!list || !diet) return;
-    const breakfast = diet.breakfast.items.join(' + ');
-    const lunch = diet.lunch[weekday % diet.lunch.length];
-    const dinner = diet.dinner[weekday % diet.dinner.length];
-    const compose = (row) => (row.order.startsWith('一份 ') ? row.name + ' ' + row.order : row.order);
-    const rows = [['早', breakfast], ['午', lunch.order], ['晚', compose(dinner)]];
-    list.innerHTML = rows.map(([key, value]) =>
-      `<li class="today-meal"><span>${escapeHTML(key)}</span><b>${escapeHTML(value)}</b></li>`
+    if (!list || !diet?.day) return;
+    const pick = (kind) => diet.day.find((row) => row.kind === kind);
+    const rows = [['早', pick('breakfast')], ['午', pick('lunch')], ['晚', pick('dinner')]];
+    if (gym.includes(weekday)) rows.push(['练后', pick('shake')]);
+    list.innerHTML = rows.filter(([, row]) => row).map(([key, row]) =>
+      `<li class="today-meal"><span>${escapeHTML(key)}</span><b>${escapeHTML(row.detail)}</b></li>`
     ).join('');
   }
 
   function renderDiet() {
-    if (!diet) return;
-    const breakfast = $('dietBreakfast');
-    if (breakfast) {
-      breakfast.innerHTML =
-        `<p class="diet-main">${diet.breakfast.items.map(escapeHTML).join(' + ')}</p>` +
-        `<p class="diet-sub">${escapeHTML(diet.breakfast.add)}</p>` +
-        `<p class="note">${escapeHTML(diet.breakfast.note)}</p>`;
-    }
+    const box = $('dietDay');
+    if (!box || !diet?.day) return;
+    box.innerHTML = diet.day.map((row) =>
+      `<div class="entry${row.kind === 'water' ? ' is-water' : ''}">` +
+      `<div class="time">${escapeHTML(row.time)}</div>` +
+      '<div class="rail"><div class="dot"></div></div>' +
+      `<div class="task"><b>${escapeHTML(row.title)}</b><span>${escapeHTML(row.detail)}</span></div>` +
+      '</div>'
+    ).join('');
 
-    const fill = (id, rows) => {
-      const box = $(id);
-      if (!box || !Array.isArray(rows)) return;
-      box.innerHTML = rows.map((row, index) =>
-        `<div class="rule"><span class="num-label">0${index + 1}</span>` +
-        `<div><b>${escapeHTML(row.name)}</b><p>${escapeHTML(row.order)}。${escapeHTML(row.tip)}。</p></div></div>`
-      ).join('');
-    };
-    fill('dietLunch', diet.lunch);
-    fill('dietDinner', diet.dinner);
-
-    const snack = $('dietSnack');
-    if (snack) snack.textContent = diet.snack;
-
-    const face = $('dietFace');
-    if (face) {
-      face.innerHTML = diet.face.map((line) => `<li>${escapeHTML(line)}</li>`).join('');
-    }
+    const summary = $('dietSummary');
+    if (summary) summary.textContent = diet.summary || '';
 
     renderTodayMeals(state.selected ?? 0);
   }
