@@ -1,0 +1,15 @@
+# 操作系统与编辑器
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
+
+# 依赖与构建产物（本项目不需要构建）
+node_modules/
+dist/
+*.log
+
+# 临时文件
+*.tmp
+~$*

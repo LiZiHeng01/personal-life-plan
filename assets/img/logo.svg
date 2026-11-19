@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" role="img" aria-label="生活计划标志">
+  <rect width="48" height="48" rx="11" fill="#302721"/>
+  <rect x="8" y="8" width="32" height="32" rx="8" fill="none" stroke="#f2dbac" stroke-width="1.6"/>
+  <circle cx="24" cy="24" r="10" fill="#edab62" stroke="#302721" stroke-width="1.5"/>
+  <path d="M14 24h20M24 14v20M17 17a9 9 0 0 1 0 14m14-14a9 9 0 0 0 0 14" fill="none" stroke="#302721" stroke-width="1.5"/>
+</svg>
