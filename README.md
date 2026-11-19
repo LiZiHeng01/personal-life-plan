@@ -39,7 +39,7 @@ python -m http.server 4173
 
 ## 修改内容
 
-- **改作息**：编辑 `assets/js/data.js` 中的 `schedules`。每项是 `["时间", "安排"]`，跨午夜的时间段写成 `23:00–07:00` 即可。
+- **改作息**：编辑 `assets/js/data.js` 中的 `schedules`。每项是 `["时间", "安排"]`，跨午夜的时间段写成 `23:30–07:00` 即可。
 - **改季节建议**：编辑 `seasonData` 里的 `walk`、`gym`、`social` 和 `skin`。自动季节的月份边界在 `assets/js/app.js` 的 `autoSeason` 中。
 - **改城市/天气**：编辑 `weather` 中的 `city`、`adcode`、`url` 和来源链接。当前使用青岛 `370200`；换城市时需要换成对应城市的 adcode。
 - **换照片**：把图片放进 `assets/img/`，再更新 `photoCollections` 中的 `src`、`source`、`credit` 和 `license`。建议保持 4:5 或接近的竖版比例，长边压到 480px 左右即可（卡片实际显示宽度约 200px）。
