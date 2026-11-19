@@ -228,6 +228,37 @@
     $('preview').innerHTML = renderEntries(preview);
   }
 
+  function humanMinutes(total) {
+    const hours = Math.floor(total / 60);
+    const minutes = total % 60;
+    if (hours && minutes) return hours + ' 小时 ' + minutes + ' 分';
+    if (hours) return hours + ' 小时';
+    return Math.max(0, minutes) + ' 分';
+  }
+
+  function renderPlanProgress(entry) {
+    const bar = $('planProgress');
+    const left = $('planLeft');
+    if (!bar || !left) return;
+
+    if (!entry) {
+      bar.style.width = '0%';
+      left.textContent = '';
+      return;
+    }
+
+    const [from, to] = entry[0].split('–').map(minutesOfDay);
+    const now = minutesOfDay(clockFormat.format(new Date()));
+    let span = to - from;
+    let elapsed = now - from;
+    if (span <= 0) span += 1440;
+    if (elapsed < 0) elapsed += 1440;
+
+    const percent = Math.min(100, Math.max(0, Math.round((elapsed / span) * 100)));
+    bar.style.width = percent + '%';
+    left.textContent = elapsed >= span ? '即将结束' : '还剩 ' + humanMinutes(span - elapsed);
+  }
+
   function renderPlan() {
     const label = $('planLabel');
     const task = $('planTask');
@@ -235,18 +266,26 @@
     if (state.currentEntry) {
       label.textContent = '现在 · ' + state.currentEntry[0];
       task.textContent = state.currentEntry[1];
+      renderPlanProgress(state.currentEntry);
       return;
     }
 
     if (state.nextEntry) {
       const [range, nextTask] = state.nextEntry.entry;
-      label.textContent = '下一项 · ' + (state.nextEntry.tomorrow ? '明天 ' : '') + range.split('–')[0];
+      const startText = range.split('–')[0];
+      label.textContent = '下一项 · ' + (state.nextEntry.tomorrow ? '明天 ' : '') + startText;
       task.textContent = nextTask;
+      const now = minutesOfDay(clockFormat.format(new Date()));
+      const wait = minutesOfDay(startText) - now;
+      renderPlanProgress(null);
+      const left = $('planLeft');
+      if (left) left.textContent = state.nextEntry.tomorrow ? '' : '还有 ' + humanMinutes(wait);
       return;
     }
 
     label.textContent = '现在';
     task.textContent = '自由安排';
+    renderPlanProgress(null);
   }
 
   function renderSeason() {
@@ -333,16 +372,25 @@
     const text = String(current.weather || '').trim();
     if (!Number.isFinite(temperature) || !text) return;
 
-    const details = [text + ' ' + Math.round(temperature) + '°C'];
-    if (current.wind_direction && current.wind_power) {
-      const power = String(current.wind_power).replace(/级$/, '');
-      details.push(current.wind_direction + ' ' + power + '级');
-    }
-    const humidity = Number(current.humidity);
-    if (Number.isFinite(humidity)) details.push('湿度 ' + Math.round(humidity) + '%');
-
-    target.textContent = details.join(' · ');
+    target.textContent = text;
     target.title = current.report_time ? '更新时间 ' + current.report_time : '';
+
+    const temp = $('wTemp');
+    if (temp) temp.textContent = Math.round(temperature) + '°C';
+
+    const wind = $('wWind');
+    if (wind) {
+      const power = String(current.wind_power || '').replace(/级$/, '');
+      wind.textContent = current.wind_direction && power
+        ? current.wind_direction + ' ' + power + ' 级'
+        : '—';
+    }
+
+    const humidity = $('wHumidity');
+    if (humidity) {
+      const value = Number(current.humidity);
+      humidity.textContent = Number.isFinite(value) ? Math.round(value) + '%' : '—';
+    }
 
     const icon = $('weatherIcon');
     if (icon) icon.textContent = weatherIconOf(text);
@@ -443,6 +491,10 @@
       } else {
         target.textContent = '天气暂不可用';
         target.title = '';
+        for (const id of ['wTemp', 'wWind', 'wHumidity']) {
+          const el = $(id);
+          if (el) el.textContent = '—';
+        }
         const updated = $('weatherUpdated');
         if (updated) updated.textContent = '点击刷新重试';
         const tip = $('weatherTip');
@@ -531,8 +583,9 @@
       state.currentEntry = entry;
       state.nextEntry = next;
       renderWeek();
-      renderPlan();
     }
+    // 进度条和剩余时间每 10 秒刷新一次
+    renderPlan();
   }
 
   /* ------------------------------------------------------------------
@@ -543,20 +596,23 @@
 
   function go(pageId, push = true) {
     const id = pageIds.includes(pageId) ? pageId : 'overview';
-    document.querySelectorAll('.page').forEach((section) => {
-      section.classList.toggle('active', section.id === 'page-' + id);
-    });
-    document.querySelectorAll('[data-page]').forEach((button) => {
-      const active = button.dataset.page === id;
-      button.classList.toggle('active', active);
-      if (active) button.setAttribute('aria-current', 'page');
-      else button.removeAttribute('aria-current');
-    });
 
-    const [title, desc] = titles[id] || titles.overview;
-    $('pagetitle').textContent = title;
-    $('pagedesc').textContent = desc;
-    document.title = title + ' · 青岛生活计划';
+    const apply = () => {
+      document.querySelectorAll('.page').forEach((section) => {
+        section.classList.toggle('is-active', section.id === 'page-' + id);
+      });
+      document.querySelectorAll('[data-page]').forEach((link) => {
+        const active = link.dataset.page === id;
+        link.classList.toggle('is-active', active);
+        if (active) link.setAttribute('aria-current', 'page');
+        else link.removeAttribute('aria-current');
+      });
+
+      const [title, desc] = titles[id] || titles.overview;
+      $('pagetitle').textContent = title;
+      $('pagedesc').textContent = desc;
+      document.title = title + ' · 青岛生活计划';
+    };
 
     if (push && location.hash.slice(1) !== id) {
       try {
@@ -565,6 +621,16 @@
         location.hash = id;
       }
     }
+
+    const reduceMotion = window.matchMedia
+      ? window.matchMedia('(prefers-reduced-motion: reduce)').matches
+      : false;
+    if (typeof document.startViewTransition === 'function' && !reduceMotion) {
+      document.startViewTransition(apply);
+    } else {
+      apply();
+    }
+
     // 浏览器会为 #section 做原生锚点滚动，等这一帧结束后再回到页首。
     requestAnimationFrame(scrollTop);
   }
@@ -616,6 +682,11 @@
 
     const pageButton = event.target.closest('[data-page]');
     if (pageButton) {
+      // 导航现在是真链接：允许 ⌘/Ctrl 点击新标签打开，普通点击交给路由。
+      if (pageButton.tagName === 'A') {
+        if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0) return;
+        event.preventDefault();
+      }
       go(pageButton.dataset.page);
       return;
     }
@@ -649,6 +720,13 @@
   renderWeatherSource();
   renderClock(true);
   go(location.hash.slice(1), false);
+
+  // 顶栏在滚动后加一条分隔线
+  const markScrolled = () => {
+    document.documentElement.dataset.scrolled = window.scrollY > 6 ? 'true' : 'false';
+  };
+  window.addEventListener('scroll', markScrolled, { passive: true });
+  markScrolled();
 
   const cachedWeather = readWeatherCache();
   if (cachedWeather) {
