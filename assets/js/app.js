@@ -288,7 +288,11 @@
 
   async function refreshWeather() {
     const target = $('localWeather');
-    if (!target || !weather) return;
+    if (!target) return;
+    if (!weather) {
+      target.textContent = '天气暂不可用';
+      return;
+    }
 
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 12000);
@@ -308,7 +312,8 @@
 
       const details = [current.weather.trim() + ' ' + Math.round(temperature) + '°C'];
       if (current.wind_direction && current.wind_power) {
-        details.push(current.wind_direction + ' ' + current.wind_power + '级');
+        const power = String(current.wind_power).replace(/级$/, '');
+        details.push(current.wind_direction + ' ' + power + '级');
       }
       const humidity = Number(current.humidity);
       if (Number.isFinite(humidity)) details.push('湿度 ' + Math.round(humidity) + '%');
