@@ -1139,6 +1139,30 @@ html:not([data-page="today"]) .hero { padding-bottom: 10px; }
   color: var(--accent);
 }
 
+.diet-main {
+  margin: 0;
+  font-family: var(--serif);
+  font-size: clamp(19px, 2.3vw, 26px);
+  font-weight: 700;
+  line-height: 1.45;
+}
+
+.diet-sub { margin: 9px 0 0; font-size: 13.5px; line-height: 1.6; color: var(--ink-2); }
+
+.diet-snack { margin: 0; font-size: 13.5px; line-height: 1.6; color: var(--ink-2); }
+
+.face-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+
+.face-list li {
+  position: relative;
+  padding-left: 18px;
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--ink-2);
+}
+
+.face-list li::before { content: "—"; position: absolute; left: 0; color: var(--accent); }
+
 .picks { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin-top: 16px; }
 
 .pick {

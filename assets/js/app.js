@@ -9,7 +9,7 @@
     return;
   }
 
-  const { names, gym, schedules, seasonOrder, seasonData, titles, photoCollections, weather, mealIdeas, market, training } = data;
+  const { names, gym, schedules, seasonOrder, seasonData, titles, photoCollections, weather, diet, market, training } = data;
   const timeZone = 'Asia/Shanghai';
   const $ = (id) => document.getElementById(id);
 
@@ -236,17 +236,47 @@
 
   function renderTodayMeals(weekday) {
     const list = $('todayMeals');
-    if (!list || !mealIdeas) return;
-    const pick = (arr, offset) =>
-      Array.isArray(arr) && arr.length ? arr[(weekday + offset) % arr.length] : '';
-    const rows = [
-      ['早', pick(mealIdeas.breakfast, 0)],
-      ['午', pick(mealIdeas.lunch, 1)],
-      ['晚', pick(mealIdeas.dinner, 2)]
-    ];
+    if (!list || !diet) return;
+    const breakfast = diet.breakfast.items.join(' + ');
+    const lunch = diet.lunch[weekday % diet.lunch.length];
+    const dinner = diet.dinner[weekday % diet.dinner.length];
+    const compose = (row) => (row.order.startsWith('一份 ') ? row.name + ' ' + row.order : row.order);
+    const rows = [['早', breakfast], ['午', lunch.order], ['晚', compose(dinner)]];
     list.innerHTML = rows.map(([key, value]) =>
       `<li class="today-meal"><span>${escapeHTML(key)}</span><b>${escapeHTML(value)}</b></li>`
     ).join('');
+  }
+
+  function renderDiet() {
+    if (!diet) return;
+    const breakfast = $('dietBreakfast');
+    if (breakfast) {
+      breakfast.innerHTML =
+        `<p class="diet-main">${diet.breakfast.items.map(escapeHTML).join(' + ')}</p>` +
+        `<p class="diet-sub">${escapeHTML(diet.breakfast.add)}</p>` +
+        `<p class="note">${escapeHTML(diet.breakfast.note)}</p>`;
+    }
+
+    const fill = (id, rows) => {
+      const box = $(id);
+      if (!box || !Array.isArray(rows)) return;
+      box.innerHTML = rows.map((row, index) =>
+        `<div class="rule"><span class="num-label">0${index + 1}</span>` +
+        `<div><b>${escapeHTML(row.name)}</b><p>${escapeHTML(row.order)}。${escapeHTML(row.tip)}。</p></div></div>`
+      ).join('');
+    };
+    fill('dietLunch', diet.lunch);
+    fill('dietDinner', diet.dinner);
+
+    const snack = $('dietSnack');
+    if (snack) snack.textContent = diet.snack;
+
+    const face = $('dietFace');
+    if (face) {
+      face.innerHTML = diet.face.map((line) => `<li>${escapeHTML(line)}</li>`).join('');
+    }
+
+    renderTodayMeals(state.selected ?? 0);
   }
 
   function renderMarket() {
@@ -854,6 +884,7 @@
   renderSeason();
   renderPhotoCredits();
   renderWeatherSource();
+  renderDiet();
   renderMarket();
   renderTraining();
   renderClock(true);
