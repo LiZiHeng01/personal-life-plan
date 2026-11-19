@@ -9,7 +9,7 @@
     return;
   }
 
-  const { names, gym, schedules, seasonOrder, seasonData, titles, photoCollections, weather, meals, mealNote, market, training } = data;
+  const { names, gym, schedules, seasonOrder, seasonData, titles, photoCollections, weather, mealIdeas, market, training } = data;
   const timeZone = 'Asia/Shanghai';
   const $ = (id) => document.getElementById(id);
 
@@ -236,28 +236,17 @@
 
   function renderTodayMeals(weekday) {
     const list = $('todayMeals');
-    if (!list || !Array.isArray(meals) || !meals.length) return;
-    const meal = meals[weekday] || meals[0];
-    const rows = [['早', meal.breakfast], ['午', meal.lunch], ['晚', meal.dinner]];
+    if (!list || !mealIdeas) return;
+    const pick = (arr, offset) =>
+      Array.isArray(arr) && arr.length ? arr[(weekday + offset) % arr.length] : '';
+    const rows = [
+      ['早', pick(mealIdeas.breakfast, 0)],
+      ['午', pick(mealIdeas.lunch, 1)],
+      ['晚', pick(mealIdeas.dinner, 2)]
+    ];
     list.innerHTML = rows.map(([key, value]) =>
       `<li class="today-meal"><span>${escapeHTML(key)}</span><b>${escapeHTML(value)}</b></li>`
     ).join('');
-  }
-
-  function renderMealPlan() {
-    const box = $('mealPlan');
-    if (!box || !Array.isArray(meals)) return;
-    box.innerHTML = meals.map((meal) =>
-      `<div class="day-row${meal.gym ? ' is-gym' : ''}">` +
-      `<span class="day-name">${escapeHTML(meal.day)}${meal.gym ? '<small>健身</small>' : ''}</span>` +
-      `<span class="meal"><i>早</i>${escapeHTML(meal.breakfast)}</span>` +
-      `<span class="meal"><i>午</i>${escapeHTML(meal.lunch)}</span>` +
-      `<span class="meal"><i>晚</i>${escapeHTML(meal.dinner)}</span>` +
-      '</div>'
-    ).join('');
-
-    const note = $('mealNote');
-    if (note) note.textContent = mealNote || '';
   }
 
   function renderMarket() {
@@ -865,7 +854,6 @@
   renderSeason();
   renderPhotoCredits();
   renderWeatherSource();
-  renderMealPlan();
   renderMarket();
   renderTraining();
   renderClock(true);

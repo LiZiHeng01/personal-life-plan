@@ -177,10 +177,11 @@
               <p class="micro">Eat</p>
               <h2 class="card-title">今天吃什么</h2>
             </div>
-            <a class="text-link" href="#eat" data-page="eat">一周餐表
+            <a class="text-link" href="#eat" data-page="eat">怎么选
               <svg class="ui-icon" aria-hidden="true" focusable="false"><use href="#icon-arrow"/></svg>
             </a>
           </header>
+          <p class="today-rule">蛋白 1 · 蔬菜 2 · 主食 1</p>
           <ul class="today-meals" id="todayMeals"></ul>
         </article>
 
@@ -260,7 +261,7 @@
       </div>
 
       <article class="card">
-        <h3 class="card-title">蛋白 1 拳 · 蔬菜 2 拳 · 主食 1 拳</h3>
+        <h3 class="card-title">先定比例，再挑品类</h3>
         <div class="plate">
           <div class="plate-item">
             <span class="num">1</span>
@@ -278,38 +279,61 @@
             <span>米饭、面、馒头、土豆玉米</span>
           </div>
         </div>
-        <p class="note">早餐也算一餐。不做饭也没关系，比例对了就行。</p>
+        <div class="picks">
+          <div class="pick">
+            <h4>蛋白 · 选 1 份</h4>
+            <ul>
+              <li>鸡腿 / 鸡胸</li>
+              <li>牛肉 / 瘦猪肉</li>
+              <li>鱼 / 虾</li>
+              <li>豆腐 / 鸡蛋</li>
+            </ul>
+          </div>
+          <div class="pick">
+            <h4>蔬菜 · 选 2 拳</h4>
+            <ul>
+              <li>清炒绿叶菜</li>
+              <li>西兰花 / 菌菇</li>
+              <li>番茄 / 黄瓜</li>
+              <li>凉拌菜（少酱）</li>
+            </ul>
+          </div>
+          <div class="pick">
+            <h4>主食 · 选 1 拳</h4>
+            <ul>
+              <li>米饭 / 杂粮饭</li>
+              <li>面 / 粉</li>
+              <li>馒头 / 包子</li>
+              <li>玉米 / 土豆 / 山药</li>
+            </ul>
+          </div>
+        </div>
+        <p class="note">不用排表，每一餐从三列里各挑一样就行；健身日主食多半个拳头。</p>
       </article>
 
       <div class="section-line">
-        <h3 class="micro">一周 · 照着吃</h3>
-        <span class="micro hint">外卖为主，照着点</span>
-      </div>
-
-      <article class="card">
-        <div class="mealplan" id="mealPlan"></div>
-        <p class="note" id="mealNote"></p>
-      </article>
-
-      <div class="section-line">
-        <h3 class="micro">点外卖 · 三句话</h3>
-        <span class="micro hint">备注里直接写</span>
+        <h3 class="micro">三个场景</h3>
+        <span class="micro hint">早餐 · 外卖 · 外食</span>
       </div>
 
       <article class="card">
         <p class="talk-line">“少油少盐，青菜多加一份，汤不要。”</p>
         <div class="rules">
           <div class="rule">
-            <span class="num-label">01</span>
-            <div><b>盖饭 / 炒菜</b><p>饭和菜分开装，汁别浇在饭上；青菜不够就加一份。</p></div>
+            <span class="num-label">早餐</span>
+            <div><b>路上买，三选一</b><p>2 个蛋 + 豆浆 + 香蕉 ／ 包子 + 蛋 + 牛奶 ／ 三明治 + 无糖酸奶。</p></div>
           </div>
           <div class="rule">
-            <span class="num-label">02</span>
-            <div><b>面 / 粉</b><p>面照吃，另加一份青菜和一个蛋；汤只喝两口。</p></div>
+            <span class="num-label">外卖</span>
+            <div><b>盖饭 / 面 / 炒菜</b><p>先点蛋白，再加一份青菜，主食照常；汤少喝，汁别浇在饭上。</p></div>
           </div>
           <div class="rule">
-            <span class="num-label">03</span>
-            <div><b>烧烤 / 火锅</b><p>先吃肉和菜，蘸料只取一次，主食最后再决定要不要。</p></div>
+            <span class="num-label">外食</span>
+            <div><b>火锅 / 烧烤 / 小馆</b><p>先吃肉和菜，蘸料只取一次，主食最后再决定。</p></div>
+          </div>
+          <div class="rule">
+            <span class="num-label">加餐</span>
+            <div><b>水果或无糖酸奶</b><p>一天一个水果，或一杯酸奶；坚果一小把就够。</p></div>
           </div>
         </div>
       </article>
