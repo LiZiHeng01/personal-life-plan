@@ -262,6 +262,9 @@
     const summary = $('dietSummary');
     if (summary) summary.textContent = diet.summary || '';
 
+    const avoid = $('dietAvoid');
+    if (avoid) avoid.textContent = diet.avoid || '';
+
     renderTodayMeals(state.selected ?? 0);
   }
 
